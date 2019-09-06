@@ -4,6 +4,9 @@ Abstract Algorithm class
 
 */
 
+#ifndef ALGORITHM_H
+#define ALGORITHM_H
+
 class Algorithm {
 public:
     virtual void Load() = 0;
@@ -22,3 +25,5 @@ public:
     
 
 };
+
+#endif ALGORITHM_H

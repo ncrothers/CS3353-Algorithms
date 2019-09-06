@@ -2,11 +2,13 @@
 
 #include "SortAlgorithms.h"
 
-void SortAlgorithms::bubbleSort(int* &arr) {
-    unsigned int len = getLength(arr);
+#include <list>
 
-    for (int i = 0; i < len; i++)
-        for (int j = i; j < len - 1; j++) {
+void merge(std::vector<int>&, int, int, int);
+
+void SortAlgorithms::bubbleSort(std::vector<int>& arr) {
+    for (size_t i = 0; i < arr.size(); i++)
+        for (size_t j = 0; j < arr.size() - i - 1; j++) {
             if (arr[j] > arr[j + 1]) {
                 int temp = arr[j + 1];
                 arr[j + 1] = arr[j];
@@ -18,27 +20,62 @@ void SortAlgorithms::bubbleSort(int* &arr) {
         }
 }
 
-void SortAlgorithms::insertionSort(int* &arr) {
-    unsigned int len = getLength(arr);
-
-    unsigned int minIndex = 0;
-
-    for (int i = 0; i < len; i++) {
-        for (int j = i; j < len; j++) {
-            if (arr[j] < arr[minIndex]) {
-                minIndex = j;
-            }
+void SortAlgorithms::insertionSort(std::vector<int>& arr) {
+    for (size_t i = 1; i < arr.size(); i++) {
+        for (int j = i - 1; j >= 0; j--) {
+            if (arr[j] < arr[i] || j == 0) {
+				int temp = arr[i];
+				// Shifts all of the displaced values down
+				for (int k = i; k > j; k--) {
+					arr[k] = arr[k - 1];
+				}
+				arr[j] = temp;
+			}
         }
-        int temp = arr[i];
-        arr[i] = arr[minIndex];
-        arr[minIndex] = temp;
     }
 }
 
-void SortAlgorithms::mergeSort(int* &arr) {
+void SortAlgorithms::mergeSort(std::vector<int> &arr, int l, int r) {
+	// Splits the vectors until they're at length 1
+	if (l < r) {
+		int m = (l + r) / 2;
+		// Left half
+		mergeSort(arr, l, m);
+		mergeSort(arr, m + 1, r);
 
+		merge(arr, l, m, r);
+	}
 }
 
-unsigned int SortAlgorithms::getLength(int* &arr) {
-    return sizeof(arr) / sizeof(arr[0]);
+void merge(std::vector<int>& arr, int l, int m, int r) {
+	int lsize = m - l + 1;
+	int rsize = r - m;
+
+	int* left = new int[lsize];
+	int* right = new int[rsize];
+
+	for (int i = 0; i < lsize; i++)
+		left[i] = arr[l + i];
+	for (int i = 0; i < rsize; i++)
+		right[i] = arr[m + i + 1];
+
+	int lindex = 0;
+	int rindex = 0;
+	int arrindex = l;
+
+	// Loop while both left and right arrays have values to check
+	while (lindex < lsize && rindex < rsize) {
+		if (left[lindex] < right[rindex])
+			arr[arrindex++] = left[lindex++];
+		else
+			arr[arrindex++] = right[rindex++];
+	}
+
+	while (lindex < lsize)
+		arr[arrindex++] = left[lindex++];
+
+	while (rindex < rsize)
+		arr[arrindex++] = right[rindex++];
+
+	delete left, right;
 }
