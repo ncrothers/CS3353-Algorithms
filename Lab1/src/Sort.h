@@ -5,9 +5,26 @@
 
 #include "Algorithm.h"
 
-class Sort /*: public Algorithm */{
+#include <string>
+#include <vector>
+
+class Sort : public Algorithm{
 public:
-    static void testSort();
+
+	Sort();
+
+	virtual void Load(const char[]);
+	virtual void Execute();
+	virtual void Display();
+	virtual void Stats();
+	virtual void Select();
+	virtual void Save();
+	virtual void Configure();
+
+private:
+	std::string curFile;
+	std::vector<std::vector<int>> data;
+	int counts[4] = { 10, 1000, 10000, 100000 };
 };
 
 #endif SORT_H

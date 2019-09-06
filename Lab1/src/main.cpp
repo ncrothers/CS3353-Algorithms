@@ -11,7 +11,8 @@ Nicholas Crothers
 
 int main() {
 
-	Sort::testSort();
+	Sort sorter;
+	sorter.Load("filename");
 
 	std::string bla;
 	std::cin >> bla;
