@@ -22,8 +22,11 @@ public:
 	virtual void Configure();
 
 private:
+	void clearData();
+
 	std::string curFile;
 	std::vector<std::vector<int>> data;
+	std::vector<std::vector<int>> sortedData;
 	int counts[4] = { 10, 1000, 10000, 100000 };
 };
 

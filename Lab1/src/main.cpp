@@ -12,7 +12,7 @@ Nicholas Crothers
 int main() {
 
 	Sort sorter;
-	sorter.Load("filename");
+	sorter.Load("semi-random");
 
 	std::string bla;
 	std::cin >> bla;

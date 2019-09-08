@@ -6,6 +6,22 @@
 
 void merge(std::vector<int>&, int, int, int);
 
+void SortAlgorithms::runSort(enum Algorithm::SortAlgos algo, std::vector<int> &arr) {
+	switch (algo) {
+	case Algorithm::BUBBLE:
+		bubbleSort(arr);
+		break;
+	case Algorithm::INSERTION:
+		insertionSort(arr);
+		break;
+	case Algorithm::MERGE:
+		mergeSort(arr, 0, arr.size() - 1);
+		break;
+	default:
+		break;
+	}
+}
+
 void SortAlgorithms::bubbleSort(std::vector<int>& arr) {
     for (size_t i = 0; i < arr.size(); i++)
         for (size_t j = 0; j < arr.size() - i - 1; j++) {
