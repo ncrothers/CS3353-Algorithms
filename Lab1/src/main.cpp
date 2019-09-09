@@ -13,6 +13,7 @@ int main() {
 
 	Sort sorter;
 	sorter.Load("semi-random");
+	sorter.Execute();
 
 	std::string bla;
 	std::cin >> bla;

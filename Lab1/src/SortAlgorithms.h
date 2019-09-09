@@ -15,7 +15,6 @@ public:
     static void mergeSort(std::vector<int> &, int, int);
 
 private:
-    static unsigned int getLength(int* &);
 
 };
 

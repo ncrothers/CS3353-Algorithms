@@ -3,6 +3,7 @@
 #include "SortAlgorithms.h"
 
 #include <list>
+#include <iostream>
 
 void merge(std::vector<int>&, int, int, int);
 
@@ -38,16 +39,13 @@ void SortAlgorithms::bubbleSort(std::vector<int>& arr) {
 
 void SortAlgorithms::insertionSort(std::vector<int>& arr) {
     for (size_t i = 1; i < arr.size(); i++) {
-        for (int j = i - 1; j >= 0; j--) {
-            if (arr[j] < arr[i] || j == 0) {
-				int temp = arr[i];
-				// Shifts all of the displaced values down
-				for (int k = i; k > j; k--) {
-					arr[k] = arr[k - 1];
-				}
-				arr[j] = temp;
-			}
-        }
+		int j = i - 1;
+		int temp = arr[i];
+        while (j >= 0 && arr[j] > temp) {
+			arr[j + 1] = arr[j];
+			j--;
+		}
+		arr[j + 1] = temp;
     }
 }
 
