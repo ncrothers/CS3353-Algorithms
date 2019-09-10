@@ -4,6 +4,7 @@
 #include "SortAlgorithms.h"
 
 #include <iostream>
+#include <iomanip>
 #include <fstream>
 #include <cstdlib>
 
@@ -41,11 +42,6 @@ void Sort::Load(const char filename[]) {
 		}
 	}
 
-	/*for (int i = 0; i < 4; i++) {
-		for (int j = 0; j < 10; j++)
-			std::cout << data[i][j] << ",";
-		std::cout << std::endl << std::endl;
-	}*/
 	copyData();
 }
 
@@ -76,6 +72,8 @@ void Sort::Display(SortAlgos algo, int size) {
 		break;
 	}
 
+	std::cout << counts[size] << " values arranged as " << curFile << std::endl;
+
 	std::cout << "Sample of result: " << std::endl;
 	for (int i = 0; i < DISPLAY_AMOUNT; i++) {
 		std::cout << sortedData[size][i];
@@ -83,9 +81,12 @@ void Sort::Display(SortAlgos algo, int size) {
 			std::cout << ",";
 	}
 
-	std::chrono::duration<double> time_span = static_cast<std::chrono::duration<double>>(end - start);
+	std::cout << std::endl;
 
-	std::cout << "Time elapsed: " << time_span.count() << " seconds." << std::endl << std::endl;
+	std::chrono::duration<double> time_span = std::chrono::duration_cast<std::chrono::duration<double>>(end - start);
+
+	std::cout	<< std::fixed << std::setprecision(10)
+				<< "Time elapsed: " << time_span.count() << " seconds." << std::endl << std::endl;
 
 }
 

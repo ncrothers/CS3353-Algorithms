@@ -10,10 +10,13 @@ Nicholas Crothers
 #include <iostream>
 
 int main() {
+	char* files[4] = { "random", "reversed", "semi-random", "semi-unique" };
 
 	Sort sorter;
-	sorter.Load("semi-random");
-	sorter.Execute();
+	for (int i = 0; i < 4; i++) {
+		sorter.Load(files[i]);
+		sorter.Execute();
+	}
 
 	std::string bla;
 	std::cin >> bla;
