@@ -55,6 +55,7 @@ void Sort::Execute() {
 			end = std::chrono::high_resolution_clock::now();
 
 			Display(static_cast<SortAlgos>(j), i);
+			Save(static_cast<SortAlgos>(j), i);
 		}
 	}
 }
@@ -98,8 +99,23 @@ void Sort::Select() {
 
 }
 
-void Sort::Save() {
+void Sort::Save(SortAlgos algo, int size) {
+	std::string sortAlgo;
+	switch (algo) {
+	case BUBBLE:
+		sortAlgo = "bubble";
+		break;
+	case INSERTION:
+		sortAlgo = "insertion";
+		break;
+	case MERGE:
+		sortAlgo = "merge";
+		break;
+	}
 
+	std::ofstream file("sorted_files/" + sortAlgo + "-sorted-" + curFile + "-" + std::to_string(counts[size]) + ".csv");
+	for (int j = 0; j < sortedData[size].size(); j++)
+		file << sortedData[size][j] << std::endl;
 }
 
 void Sort::Configure() {

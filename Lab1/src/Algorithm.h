@@ -21,7 +21,7 @@ public:
     virtual void Display(SortAlgos, int) = 0;
     virtual void Stats() = 0;
     virtual void Select() = 0;
-    virtual void Save() = 0;
+    virtual void Save(SortAlgos, int) = 0;
     virtual void Configure() = 0;
 };
 

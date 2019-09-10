@@ -19,7 +19,7 @@ public:
 	virtual void Display(SortAlgos, int);
 	virtual void Stats();
 	virtual void Select();
-	virtual void Save();
+	virtual void Save(SortAlgos, int);
 	virtual void Configure();
 
 private:
