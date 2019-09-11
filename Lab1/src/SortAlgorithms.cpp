@@ -24,17 +24,15 @@ void SortAlgorithms::runSort(enum Algorithm::SortAlgos algo, std::vector<int> &a
 }
 
 void SortAlgorithms::bubbleSort(std::vector<int>& arr) {
-    for (size_t i = 0; i < arr.size(); i++)
-        for (size_t j = 0; j < arr.size() - i - 1; j++) {
-            if (arr[j] > arr[j + 1]) {
-                int temp = arr[j + 1];
-                arr[j + 1] = arr[j];
-                arr[j] = temp;
-            }
-            else {
-                continue;
-            }
-        }
+	for (size_t i = 0; i < arr.size(); i++) {
+		for (size_t j = 0; j < arr.size() - i - 1; j++) {
+			if (arr[j] > arr[j + 1]) {
+				int temp = arr[j + 1];
+				arr[j + 1] = arr[j];
+				arr[j] = temp;
+			}
+		}
+	}
 }
 
 void SortAlgorithms::insertionSort(std::vector<int>& arr) {
@@ -61,6 +59,7 @@ void SortAlgorithms::mergeSort(std::vector<int> &arr, int l, int r) {
 	}
 }
 
+// Merges the two arrays
 void merge(std::vector<int>& arr, int l, int m, int r) {
 	int lsize = m - l + 1;
 	int rsize = r - m;
