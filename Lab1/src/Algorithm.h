@@ -19,10 +19,7 @@ public:
     virtual void Load(const char[]) = 0;
     virtual void Execute() = 0;
     virtual void Display(SortAlgos, int) = 0;
-    virtual void Stats() = 0;
-    virtual void Select() = 0;
     virtual void Save(SortAlgos, int) = 0;
-    virtual void Configure() = 0;
 };
 
 #endif ALGORITHM_H

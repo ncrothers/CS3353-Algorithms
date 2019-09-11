@@ -13,6 +13,7 @@
 Sort::Sort() {
 }
 
+// Clears out the data before loading in new values
 void Sort::clearData() {
 	data.clear();
 	sortedData.clear();
@@ -23,7 +24,7 @@ void Sort::clearData() {
 	}
 }
 
-// Copies the source vectors into the vectors that will be operated on
+// Copies the source data into the vectors that will store the sorted values
 void Sort::copyData() {
 	std::copy(data.begin(), data.end(), sortedData.begin());
 }
@@ -75,27 +76,10 @@ void Sort::Display(SortAlgos algo, int size) {
 
 	std::cout << counts[size] << " values arranged as " << curFile << std::endl;
 
-	std::cout << "Sample of result: " << std::endl;
-	for (int i = 0; i < DISPLAY_AMOUNT; i++) {
-		std::cout << sortedData[size][i];
-		if (i != DISPLAY_AMOUNT - 1)
-			std::cout << ",";
-	}
-
-	std::cout << std::endl;
-
 	std::chrono::duration<double> time_span = std::chrono::duration_cast<std::chrono::duration<double>>(end - start);
 
 	std::cout	<< std::fixed << std::setprecision(10)
 				<< "Time elapsed: " << time_span.count() << " seconds." << std::endl << std::endl;
-
-}
-
-void Sort::Stats() {
-
-}
-
-void Sort::Select() {
 
 }
 
@@ -116,8 +100,4 @@ void Sort::Save(SortAlgos algo, int size) {
 	std::ofstream file("sorted_files/" + sortAlgo + "-sorted-" + curFile + "-" + std::to_string(counts[size]) + ".csv");
 	for (int j = 0; j < sortedData[size].size(); j++)
 		file << sortedData[size][j] << std::endl;
-}
-
-void Sort::Configure() {
-
 }

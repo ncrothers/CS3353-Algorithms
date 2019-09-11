@@ -91,5 +91,6 @@ void merge(std::vector<int>& arr, int l, int m, int r) {
 	while (rindex < rsize)
 		arr[arrindex++] = right[rindex++];
 
-	delete left, right;
+	delete[] left;
+	delete[] right;
 }
