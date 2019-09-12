@@ -15,10 +15,12 @@ int main() {
 	char const* files[4] = { "random", "reversed", "semi-random", "semi-unique" };
 
 	Sort sorter;
-	for (int i = 0; i < 4; i++) {
+	for (int i = 1; i < 4; i++) {
 		sorter.Load(files[i]);
 		sorter.Execute();
 	}
+	std::string stuff;
+	std::getline(std::cin, stuff);
 
     return 0;
 }

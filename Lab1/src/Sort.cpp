@@ -15,11 +15,9 @@ Sort::Sort() {
 
 // Clears out the data before loading in new values
 void Sort::clearData() {
-	data.clear();
 	sortedData.clear();
 	std::vector<int> temp;
 	for (int i = 0; i < 4; i++) {
-		data.push_back(temp);
 		sortedData.push_back(temp);
 	}
 }
@@ -31,7 +29,11 @@ void Sort::copyData() {
 
 void Sort::Load(const char filename[]) {
 	curFile = filename;
-
+	data.clear();
+	std::vector<int> temp;
+	for (int i = 0; i < 4; i++) {
+		data.push_back(temp);
+	}
 	clearData();
 
 	for (int i = 0; i < 4; i++) {
@@ -57,6 +59,8 @@ void Sort::Execute() {
 
 			Display(static_cast<SortAlgos>(j), i);
 			Save(static_cast<SortAlgos>(j), i);
+			clearData();
+			copyData();
 		}
 	}
 }
