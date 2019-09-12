@@ -19,8 +19,6 @@ int main() {
 		sorter.Load(files[i]);
 		sorter.Execute();
 	}
-	std::string stuff;
-	std::getline(std::cin, stuff);
 
     return 0;
 }
