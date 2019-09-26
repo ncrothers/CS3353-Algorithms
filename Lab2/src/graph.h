@@ -1,11 +1,12 @@
-#ifndef NODE_H
-#define NODE_H
-
 /* ========================================= */
 /*                   Node                    */
 /* ========================================= */
 
 #include <vector>
+
+/*
+#ifndef NODE_H
+#define NODE_H
 
 template <class T>
 class Node {
@@ -44,11 +45,23 @@ Node<T>::Node(const Node<T>& node) :
 
 #endif NODE_H
 
+*/
+
+template <class T>
+struct Node {
+
+};
+
+struct Edge {
+	float weight;
+
+};
+
 #ifndef GRAPH_H
 #define GRAPH_H
 
 /* ========================================= */
-/*                   Node                    */
+/*                  Graph                    */
 /* ========================================= */
 
 template <class T>
@@ -58,6 +71,7 @@ public:
 	graph(const graph&);
 
 private:
+
 };
 
 template <class T>
