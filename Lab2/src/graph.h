@@ -1,62 +1,3 @@
-/* ========================================= */
-/*                   Node                    */
-/* ========================================= */
-
-#include <vector>
-
-/*
-#ifndef NODE_H
-#define NODE_H
-
-template <class T>
-class Node {
-public:
-	Node();
-	Node(const T&);
-	Node(const Node<T>&);
-	T& getData();
-
-private:
-	template <class U> friend class graph;
-	T data;
-	vector<Node<T>*> children;
-};
-
-template <class T>
-Node<T>::Node() {
-	next = prev = nullptr;
-}
-
-template <class T>
-Node<T>::Node(const T& val) : data(val) {
-	next = prev = nullptr;
-}
-
-template <class T>
-T& Node<T>::getData() {
-	return data;
-}
-
-template <class T>
-Node<T>::Node(const Node<T>& node) :
-	children(node.children),
-	data(node.data) {
-}
-
-#endif NODE_H
-
-*/
-
-template <class T>
-struct Node {
-
-};
-
-struct Edge {
-	float weight;
-
-};
-
 #ifndef GRAPH_H
 #define GRAPH_H
 
@@ -64,23 +5,54 @@ struct Edge {
 /*                  Graph                    */
 /* ========================================= */
 
+#include "linked_list.h"
+#include <vector>
+#include <unordered_map>
+
 template <class T>
 class graph {
 public:
-	graph();
+	// Type represents which data structure the graph uses.
+	// 0 = adjacency list
+	// 1 = adjacency matrix
+	graph(size_t type, size_t size);
 	graph(const graph&);
 
-private:
+	void insert(const T& insert_location, const T& value);
 
+private:
+	linked_list<linked_list<T>> adj_list;
+	std::vector<std::vector<T>> adj_matrix;
+	std::unordered_map<std::pair<T, T>, std::vector<int>> path_weights;
+	std::unordered_map<T, int*> vertex_pos;
+	size_t graphType;
 };
 
 template <class T>
-graph<T>::graph() {
+graph<T>::graph(size_t type, size_t size) {
+	if (type == 0) {
+		graphType = 0;
+		for (int i = 0; i < size; i++)
+			adj_list.insertBack(linked_list<T>);
 
+	}
+	else if (type == 1) {
+		graphType = 1;
+		for (int i = 0; i < size i++)
+			adj_matrix.push_back(std::vector<T>);
+	}
+	else {
+		throw "Invalid type for graph";
+	}
 }
 
 template <class T>
 graph<T>::graph(const graph& input) {
+
+}
+
+template <class T>
+void graph<T>::insert(const T& insert_location, const T& value) {
 
 }
 
