@@ -77,6 +77,8 @@ private:
 	void resetIter();
 	void stepIter();
 	bool validIter() const;
+
+	T& operator[](const size_t index);
 };
 
 template <class T>
@@ -218,6 +220,21 @@ void linked_list<T>::stepIter() {
 template <class T>
 bool linked_list<T>::validIter() const {
 	return iter != nullptr;
+}
+
+template <class T>
+T& linked_list<T>::operator[](const size_t index) {
+	if (size / 2 > index) {
+		resetIter();
+		for (int i = 0; i < index; i++)
+			stepIter();
+	}
+	else {
+		iter = tail;
+		for (int i = size - 1; i > index; i--)
+			iter = iter->prev;
+	}
+	return iter->data;
 }
 
 #endif LINKED_LIST_H

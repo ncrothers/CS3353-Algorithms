@@ -19,9 +19,10 @@ public:
 	graph(const graph&);
 
 	void insert(const T& insert_location, const T& value);
+	std::vector<T> getChildren(const T&);
 
 private:
-	linked_list<linked_list<T>> adj_list;
+	std::vector<linked_list<T>> adj_list;
 	std::vector<std::vector<T>> adj_matrix;
 	std::unordered_map<std::pair<T, T>, std::vector<int>> path_weights;
 	std::unordered_map<T, int*> vertex_pos;
@@ -38,8 +39,9 @@ graph<T>::graph(size_t type, size_t size) {
 	}
 	else if (type == 1) {
 		graphType = 1;
-		for (int i = 0; i < size i++)
-			adj_matrix.push_back(std::vector<T>);
+		adj_matrix.reserve(size);
+		for (auto vec : adj_matrix)
+			vec.reserve(size);
 	}
 	else {
 		throw "Invalid type for graph";
@@ -53,6 +55,11 @@ graph<T>::graph(const graph& input) {
 
 template <class T>
 void graph<T>::insert(const T& insert_location, const T& value) {
+	
+}
+
+template <class T>
+std::vector<T> graph<T>::getChildren(const T& node) {
 
 }
 

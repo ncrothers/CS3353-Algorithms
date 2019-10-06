@@ -16,10 +16,17 @@ public:
 		LAST
 	};
 
+	enum SearchAlgos {
+		BFS = SortAlgos::LAST,
+		DFS,
+		DIJKSTRA,
+		ASTAR
+	};
+
     virtual void Load(const char[]) = 0;
     virtual void Execute() = 0;
-    virtual void Display(SortAlgos, int) = 0;
-    virtual void Save(SortAlgos, int) = 0;
+    virtual void Display(SearchAlgos, int) = 0;
+    virtual void Save(SearchAlgos, int) = 0;
 };
 
 #endif ALGORITHM_H
