@@ -8,59 +8,55 @@
 #include "linked_list.h"
 #include <vector>
 #include <unordered_map>
+#include <algorithm>
+
+struct Position {
+	Position(float _x, float _y, float _z) {
+		x = _x;
+		y = _y;
+		z = _z;
+	}
+	float x, y, z;
+};
 
 template <class T>
 class graph {
 public:
-	// Type represents which data structure the graph uses.
-	// 0 = adjacency list
-	// 1 = adjacency matrix
-	graph(size_t type, size_t size);
-	graph(const graph&);
+	virtual void insert(const T& insert_location, const T& value) = 0;
+	virtual std::vector<T> getChildren(const T& parent) const = 0;
 
-	void insert(const T& insert_location, const T& value);
-	std::vector<T> getChildren(const T&);
+	// Returns the path weight between the two given values
+	// Returns -1 if not found
+	virtual float getWeight(const T& start, const T& end) const;
 
-private:
-	std::vector<linked_list<T>> adj_list;
-	std::vector<std::vector<T>> adj_matrix;
-	std::unordered_map<std::pair<T, T>, std::vector<int>> path_weights;
-	std::unordered_map<T, int*> vertex_pos;
-	size_t graphType;
+	// Returns the node's position values as a Position
+	// Returns a Position with x = INT32_MAX if not found
+	virtual Position& getPos(const T& node) const;
+
+protected:
+	std::vector<std::vector<T>> data;
+	std::unordered_map<std::pair<T, T>, float> path_weights;
+	std::unordered_map<T, Position> vertex_pos;
 };
 
 template <class T>
-graph<T>::graph(size_t type, size_t size) {
-	if (type == 0) {
-		graphType = 0;
-		for (int i = 0; i < size; i++)
-			adj_list.insertBack(linked_list<T>);
-
+float graph<T>::getWeight(const T& start, const T& end) const {
+	try {
+		return path_weights.at(std::make_pair<T, T>(start, end));
 	}
-	else if (type == 1) {
-		graphType = 1;
-		adj_matrix.reserve(size);
-		for (auto vec : adj_matrix)
-			vec.reserve(size);
-	}
-	else {
-		throw "Invalid type for graph";
+	catch (std::exception e) {
+		return -1;
 	}
 }
 
 template <class T>
-graph<T>::graph(const graph& input) {
-
-}
-
-template <class T>
-void graph<T>::insert(const T& insert_location, const T& value) {
-	
-}
-
-template <class T>
-std::vector<T> graph<T>::getChildren(const T& node) {
-
+Position& graph<T>::getPos(const T& node) const {
+	try {
+		return vertex_pos.at(node);
+	}
+	catch (std::exception e) {
+		return graph<T>::Position(INT32_MAX, 0, 0);
+	}
 }
 
 #endif GRAPH_H

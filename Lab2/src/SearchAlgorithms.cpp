@@ -40,7 +40,24 @@ tree<int> SearchAlgorithms::BFS(graph<int>& data, int start, int dest) {
 }
 
 tree<int> SearchAlgorithms::DFS(graph<int>& data, int start, int dest) {
+	std::stack<int> nodes;
+	nodes.push(start);
+	while (!nodes.empty()) {
+		int curNode = nodes.top();
+		nodes.pop();
 
+		path.insert(curNode, data.getChildren(curNode));
+
+		std::vector<int> children = data.getChildren(curNode);
+		for (auto child : children)
+			nodes.push(child);
+
+		if (curNode == dest) {
+			return path;
+		}
+	}
+	tree<int> emptyPath;
+	return emptyPath;
 }
 
 tree<int> SearchAlgorithms::dijkstra(graph<int>& data, int start, int dest) {
