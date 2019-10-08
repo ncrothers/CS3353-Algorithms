@@ -1,7 +1,6 @@
 #include "AdjMatrix.h"
 
-template <class T>
-AdjMatrix<T>::AdjMatrix(size_t size) {
+AdjMatrix::AdjMatrix(size_t size) {
 	this->data.reserve(size);
 	
 	for (auto row : this->data) {
@@ -9,16 +8,21 @@ AdjMatrix<T>::AdjMatrix(size_t size) {
 	}
 }
 
-template <class T>
-void AdjMatrix<T>::insert(const T& insert_location, const T& value) {
+void AdjMatrix::insert(size_t insert_location, size_t value, float weight) {
+	if (insert_location > data.size())
+		return;
+	if (value > data[insert_location - 1].size())
+		return;
 
+	data[insert_location - 1][value - 1] = value;
 }
 
-template <class T>
-const std::vector<T> AdjMatrix<T>::getChildren(const T& parent) const {
-	std::vector<T> children;
+std::vector<int> AdjMatrix::getChildren(size_t parent) const {
+	std::vector<int> children;
 	
 	for (auto child : this->data[parent - 1])
 		if (child != 0)
 			children.push_back(child);
+
+	return children;
 }

@@ -4,7 +4,7 @@
 #include <queue>
 
 tree<int> SearchAlgorithms::runSearch(enum Algorithm::SearchAlgos algo, 
-									graph<int>& data, int start, int dest) {
+									graph& data, int start, int dest) {
 	switch (algo) {
 	case Algorithm::BFS:
 		return BFS(data, start, dest);
@@ -18,7 +18,7 @@ tree<int> SearchAlgorithms::runSearch(enum Algorithm::SearchAlgos algo,
 }
 
 // Iterative
-tree<int> SearchAlgorithms::BFS(graph<int>& data, int start, int dest) {
+tree<int> SearchAlgorithms::BFS(graph& data, int start, int dest) {
 	std::queue<int> nodes;
 	nodes.push(start);
 	while (!nodes.empty()) {
@@ -39,7 +39,7 @@ tree<int> SearchAlgorithms::BFS(graph<int>& data, int start, int dest) {
 	return emptyPath;
 }
 
-tree<int> SearchAlgorithms::DFS(graph<int>& data, int start, int dest) {
+tree<int> SearchAlgorithms::DFS(graph& data, int start, int dest) {
 	std::stack<int> nodes;
 	nodes.push(start);
 	while (!nodes.empty()) {
@@ -60,10 +60,10 @@ tree<int> SearchAlgorithms::DFS(graph<int>& data, int start, int dest) {
 	return emptyPath;
 }
 
-tree<int> SearchAlgorithms::dijkstra(graph<int>& data, int start, int dest) {
+tree<int> SearchAlgorithms::dijkstra(graph& data, int start, int dest) {
 
 }
 
-tree<int> SearchAlgorithms::aStar(graph<int>& data, int start, int dest) {
+tree<int> SearchAlgorithms::aStar(graph& data, int start, int dest) {
 
 }
