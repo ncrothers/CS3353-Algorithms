@@ -22,7 +22,8 @@ public:
 	};
 
 	virtual void insert(int insert_location, int value, float weight) = 0;
-	virtual std::vector<int> getChildren(const int parent) const = 0;
+	virtual std::vector<int> getChildren(int parent) const = 0;
+	virtual float getWeight(int start, int end) = 0;
 
 	// Returns the node's position values as a Position
 	// Returns a Position with x = INint32_MAX if not found

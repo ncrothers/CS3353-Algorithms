@@ -26,3 +26,11 @@ std::vector<int> AdjMatrix::getChildren(size_t parent) const {
 
 	return children;
 }
+
+float AdjMatrix::getWeight(size_t start, size_t end) const {
+	if (start > data.size() || 
+		end > data[start - 1].size())
+		return -1;
+	
+	return data[start][end];
+}
