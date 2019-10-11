@@ -8,21 +8,30 @@ AdjMatrix::AdjMatrix(size_t size) {
 	}
 }
 
-void AdjMatrix::insert(size_t insert_location, size_t value, float weight) {
+void AdjMatrix::insert(size_t insert_location, size_t value) {
 	if (insert_location > data.size())
 		return;
 	if (value > data[insert_location - 1].size())
 		return;
 
-	data[insert_location - 1][value - 1] = value;
+	data[insert_location - 1][value - 1].data = value;
+}
+
+void AdjMatrix::setWeight(size_t insert_location, size_t value, float weight) {
+	if (insert_location > data.size())
+		return;
+	if (value > data[insert_location - 1].size())
+		return;
+
+	data[insert_location - 1][value - 1].weight = weight;
 }
 
 std::vector<int> AdjMatrix::getChildren(size_t parent) const {
 	std::vector<int> children;
 	
 	for (auto child : this->data[parent - 1])
-		if (child != 0)
-			children.push_back(child);
+		if (child.data != 0)
+			children.push_back(child.data);
 
 	return children;
 }
@@ -32,5 +41,5 @@ float AdjMatrix::getWeight(size_t start, size_t end) const {
 		end > data[start - 1].size())
 		return -1;
 	
-	return data[start][end];
+	return data[start][end].weight;
 }

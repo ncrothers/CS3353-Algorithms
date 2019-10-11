@@ -4,12 +4,28 @@ AdjList::AdjList(size_t size) {
 	data.reserve(size);
 }
 
-void AdjList::insert(size_t insert_location, size_t value, float weight) {
+void AdjList::insert(size_t insert_location, size_t value) {
 	if (insert_location > data.size())
 		return;
 
-	Node* newNode = new Node(value, weight);
+	Node* newNode = new Node(value);
 	data[insert_location - 1].neighbors.push_back(newNode);
+}
+
+void AdjList::setWeight(size_t start, size_t end, float weight) {
+	if (start > data.size())
+		return;
+	// Checks if the end node is a neighbor of the start point
+	if (!std::binary_search(data[start - 1].neighbors.front(), 
+							data[start - 1].neighbors.back(),
+							end))
+		return;
+
+	// Gets index of where the end node is within the neighbor node
+	int cur = 0;
+	while (data[start - 1].neighbors[cur]->data != end)
+		cur++;
+	data[start - 1].neighbors[cur]->weight = weight;
 }
 
 std::vector<int> AdjList::getChildren(size_t parent) const {

@@ -5,25 +5,10 @@
 
 class AdjList : public graph {
 public:
-	struct Node {
-		Node(size_t _data, float _weight) {
-			data = _data;
-			weight = _weight;
-		}
-
-		~Node() {
-			for (auto node : neighbors)
-				delete node;
-		}
-
-		size_t data;
-		float weight;
-		std::vector<Node*> neighbors;
-	};
-
 	AdjList(size_t size);
 
-	virtual void insert(size_t insert_location, size_t value, float weight);
+	virtual void insert(size_t insert_location, size_t value);
+	virtual void setWeight(size_t insert_location, size_t value, float weight);
 	virtual std::vector<int> getChildren(size_t parent) const;
 	// Returns -1 if either start or end is invalid
 	virtual float getWeight(size_t start, size_t end) const;

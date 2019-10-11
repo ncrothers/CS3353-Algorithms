@@ -12,6 +12,21 @@
 
 class graph {
 public:
+	struct Node {
+		Node(size_t _data) {
+			data = _data;
+		}
+
+		~Node() {
+			for (auto node : neighbors)
+				delete node;
+		}
+
+		size_t data;
+		float weight;
+		std::vector<Node*> neighbors;
+	};
+
 	struct Position {
 		Position(float _x, float _y, float _z) {
 			x = _x;
@@ -21,7 +36,8 @@ public:
 		float x, y, z;
 	};
 
-	virtual void insert(int insert_location, int value, float weight) = 0;
+	virtual void insert(int insert_location, int value) = 0;
+	virtual void setWeight(size_t insert_location, size_t value, float weight) = 0;
 	virtual std::vector<int> getChildren(int parent) const = 0;
 	virtual float getWeight(int start, int end) = 0;
 
