@@ -1,7 +1,19 @@
 #include "AdjList.h"
 
+AdjList::AdjList() {
+
+}
+
 AdjList::AdjList(size_t size) {
-	data.reserve(size);
+	reserve(size);
+}
+
+void AdjList::reserve(size_t size) {
+	if (data.size() == 0) {
+		data.reserve(size);
+		for (int i = 0; i < size; i++)
+			data.push_back(Node(i + 1));
+	}
 }
 
 void AdjList::insert(size_t insert_location, size_t value) {
@@ -16,9 +28,14 @@ void AdjList::setWeight(size_t start, size_t end, float weight) {
 	if (start > data.size())
 		return;
 	// Checks if the end node is a neighbor of the start point
-	if (!std::binary_search(data[start - 1].neighbors.front(), 
-							data[start - 1].neighbors.back(),
-							end))
+	bool exists = false;
+	for (auto node : data[start - 1].neighbors) {
+		if (node->data == end) {
+			exists = true;
+			break;
+		}
+	}
+	if (!exists)
 		return;
 
 	// Gets index of where the end node is within the neighbor node

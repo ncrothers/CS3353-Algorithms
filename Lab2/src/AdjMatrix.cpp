@@ -1,10 +1,29 @@
 #include "AdjMatrix.h"
 
+AdjMatrix::AdjMatrix() {
+
+}
+
 AdjMatrix::AdjMatrix(size_t size) {
 	this->data.reserve(size);
 	
 	for (auto row : this->data) {
 		row.reserve(size);
+	}
+}
+
+void AdjMatrix::reserve(size_t size) {
+	if (this->data.size() == 0) {
+		data.reserve(size);
+
+		for (auto row : this->data) {
+			row.reserve(size);
+		}
+	}
+	for (int i = 0; i < size; i++) {
+		data.push_back(std::vector<Node>());
+		for (int y = 0; y < size; y++)
+			data[i].push_back(Node(0));
 	}
 }
 

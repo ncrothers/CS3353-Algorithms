@@ -20,12 +20,13 @@ public:
 		BFS = SortAlgos::LAST,
 		DFS,
 		DIJKSTRA,
-		ASTAR
+		ASTAR,
+		END
 	};
 
     virtual void Load(const char[]) = 0;
     virtual void Execute() = 0;
-    virtual void Display(SearchAlgos, int) = 0;
+    virtual void Display(SearchAlgos) = 0;
     virtual void Save(SearchAlgos, int) = 0;
 };
 

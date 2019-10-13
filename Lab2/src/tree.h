@@ -40,7 +40,7 @@ private:
 
 	void makeEmpty(Node<T>* node);
 	void setRoot(const T& location);
-	Node<T>* findNode(const Node<T>* iter, const T& location);
+	Node<T>* findNode(Node<T>* iter, const T& location);
 };
 
 template <class T>
@@ -89,7 +89,9 @@ void tree<T>::insert(const T& location, const std::vector<T>& children) {
 
 	Node<T>* parent = findNode(root, location);
 	if (parent != nullptr) {
-		parent->children = children;
+		for (int i = 0; i < children.size(); i++) {
+			parent->children.push_back(new Node<T>(children[i]));
+		}
 	}
 	else {
 		throw "Parent node not found";
@@ -102,7 +104,7 @@ void tree<T>::setRoot(const T& location) {
 }
 
 template <class T>
-tree<T>::Node<T>* tree<T>::findNode(const Node<T>* iter, const T& location) {
+tree<T>::Node<T>* tree<T>::findNode(Node<T>* iter, const T& location) {
 	if (iter->data != location) {
 		for (auto node : iter->children)
 			findNode(node, location);

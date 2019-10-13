@@ -10,9 +10,9 @@
 
 class Parser {
 public:
-	static void loadGraph(graph& graph, char* filePath);
-	static void loadPositions(std::unordered_map<int, graph::Position>& vertex_pos, char* filePath);
-	static void loadWeights(graph& graph, char* filePath);
+	static void loadGraph(graph& graph, const char* filePath);
+	static void loadPositions(graph& graph, const char* filePath);
+	static void loadWeights(graph& graph, const char* filePath);
 
 private:
 	static std::vector<int> splitNodes(std::string& str);

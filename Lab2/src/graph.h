@@ -23,7 +23,7 @@ public:
 		}
 
 		size_t data;
-		float weight;
+		float weight = 0;
 		std::vector<Node*> neighbors;
 	};
 
@@ -36,17 +36,19 @@ public:
 		float x, y, z;
 	};
 
-	virtual void insert(int insert_location, int value) = 0;
+	virtual void reserve(size_t size) = 0;
+	virtual void insert(size_t insert_location, size_t value) = 0;
 	virtual void setWeight(size_t insert_location, size_t value, float weight) = 0;
-	virtual std::vector<int> getChildren(int parent) const = 0;
-	virtual float getWeight(int start, int end) = 0;
+	virtual std::vector<int> getChildren(size_t parent) const = 0;
+	virtual float getWeight(size_t start, size_t end) const = 0;
+	virtual void setPos(size_t node, float x, float y, float z);
 
 	// Returns the node's position values as a Position
 	// Returns a Position with x = INint32_MAX if not found
 	virtual Position getPos(int node) const;
 
 protected:
-	std::unordered_map<int, Position> vertex_pos;
+	std::unordered_map<int, Position> vertexPos;
 };
 
 #endif GRAPH_H

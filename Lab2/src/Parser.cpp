@@ -1,9 +1,17 @@
 #include "Parser.h"
 
-void Parser::loadGraph(graph& graph, char* filePath) {
-	std::ifstream file;
+void Parser::loadGraph(graph& graph, const char* filePath) {
+	std::ifstream file(filePath);
 
 	std::string line;
+	int count = 0;
+	while (file >> line)
+		count++;
+
+	file.clear();
+	file.seekg(0);
+	graph.reserve(count);
+
 	while (file >> line) {
 		std::vector<int> nodes = splitNodes(line);
 		for (int i = 1; i < nodes.size(); i++) {
@@ -12,12 +20,18 @@ void Parser::loadGraph(graph& graph, char* filePath) {
 	}
 }
 
-void Parser::loadPositions(std::unordered_map<int, graph::Position>& vertex_pos, char* filePath) {
+void Parser::loadPositions(graph& graph, const char* filePath) {
+	std::ifstream file(filePath);
 
+	std::string line;
+	while (file >> line) {
+		std::vector<float> pos = splitPos(line);
+		graph.setPos(pos[0], pos[1], pos[2], pos[3]);
+	}
 }
 
-void Parser::loadWeights(graph& graph, char* filePath) {
-	std::ifstream file;
+void Parser::loadWeights(graph& graph, const char* filePath) {
+	std::ifstream file(filePath);
 
 	std::string line;
 	while (file >> line) {
