@@ -45,12 +45,12 @@ void AdjMatrix::setWeight(size_t insert_location, size_t value, float weight) {
 	data[insert_location - 1][value - 1].weight = weight;
 }
 
-std::vector<int> AdjMatrix::getChildren(size_t parent) const {
-	std::vector<int> children;
+std::vector<graph::Node> AdjMatrix::getChildren(size_t parent) const {
+	std::vector<Node> children;
 	
 	for (auto child : this->data[parent - 1])
 		if (child.data != 0)
-			children.push_back(child.data);
+			children.push_back(child);
 
 	return children;
 }

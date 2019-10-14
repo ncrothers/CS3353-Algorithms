@@ -22,7 +22,7 @@ void Search::Load(const char* path) {
 
 void Search::Execute() {
 	for (int i = Algorithm::SearchAlgos::BFS; i < Algorithm::SearchAlgos::END; i++) {
-		SearchAlgorithms::runSearch(static_cast<Algorithm::SearchAlgos>(i), adjlist, 1, 5);
+		SearchAlgorithms::runSearch(static_cast<Algorithm::SearchAlgos>(i), adjlist, 1, 7);
 	}
 }
 
@@ -32,7 +32,11 @@ void Search::Display(Algorithm::SearchAlgos algo) {
 		for (int i = 1; i <= 16; i++) {
 			std::cout << i << ":";
 			for (auto val : adjmatrix.getChildren(i)) {
-				std::cout << val << ",";
+				std::cout << val.data << ",";
+			}
+			std::cout << std::endl;
+			for (auto val : adjmatrix.getChildren(i)) {
+				std::cout << val.weight << ",";
 			}
 			std::cout << std::endl;
 		}

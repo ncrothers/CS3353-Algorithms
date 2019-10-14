@@ -15,7 +15,7 @@ int main(int argc, char* argv[]) {
 
 	Search search;
 	search.Load("data16/");
-	search.Display(Algorithm::SearchAlgos::BFS);
+	search.Execute();
 
 	std::string stuff;
 	std::getline(std::cin, stuff);

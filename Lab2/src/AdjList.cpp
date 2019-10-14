@@ -45,10 +45,10 @@ void AdjList::setWeight(size_t start, size_t end, float weight) {
 	data[start - 1].neighbors[cur]->weight = weight;
 }
 
-std::vector<int> AdjList::getChildren(size_t parent) const {
-	std::vector<int> children;
+std::vector<graph::Node> AdjList::getChildren(size_t parent) const {
+	std::vector<Node> children;
 	for (auto child : data[parent - 1].neighbors)
-		children.push_back(child->data);
+		children.push_back(*child);
 	return children;
 }
 
