@@ -5,6 +5,8 @@
 #include "graph.h"
 #include "tree.h"
 
+#include <queue>
+
 class SearchAlgorithms {
 public:
 	struct SearchNode {
@@ -39,17 +41,22 @@ public:
 	// Used for storage in the priority queue, allows sorting by weight
 	struct WeightComp {
 		bool operator() (const SearchNode* lhs, const SearchNode* rhs) const {
-			return lhs->totalWeight < rhs->totalWeight;
+			return lhs->totalWeight > rhs->totalWeight;
 		}
 	};
 	// Runs the sorting algorithm based on what enum value was passed in
 	static std::vector<int> runSearch(enum Algorithm::SearchAlgos algo, graph& data, int start, int dest);
 	static std::vector<int> BFS(graph& data, int start, int dest);
 	static std::vector<int> DFS(graph& data, int start, int dest);
+	static std::vector<int> recurBFS(graph& data, int start, int dest);
+	static std::vector<int> recurDFS(graph& data, int start, int dest);
 	static std::vector<int> dijkstra(graph& data, int start, int dest);
 	static std::vector<int> aStar(graph& data, int start, int dest);
 
 private:
+	static bool recurBFS(graph& data, int dest, std::vector<bool>& visited, std::queue<int>& nodes);
+	static bool recurDFS(graph& data, int cur, int dest, std::vector<bool>& visited);
+
 	static tree<int>* path;
 };
 

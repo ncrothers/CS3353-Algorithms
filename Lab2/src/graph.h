@@ -42,6 +42,7 @@ public:
 	virtual std::vector<Node> getChildren(size_t parent) const = 0;
 	virtual float getWeight(size_t start, size_t end) const = 0;
 	virtual void setPos(size_t node, float x, float y, float z);
+	virtual size_t getSize()const;
 
 	// Returns the node's position values as a Position
 	// Returns a Position with x = INint32_MAX if not found
@@ -49,6 +50,7 @@ public:
 
 protected:
 	std::unordered_map<int, Position> vertexPos;
+	size_t graphSize;
 };
 
 #endif GRAPH_H

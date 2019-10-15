@@ -25,6 +25,7 @@ void AdjMatrix::reserve(size_t size) {
 		for (int y = 0; y < size; y++)
 			data[i].push_back(Node(0));
 	}
+	graphSize = size;
 }
 
 void AdjMatrix::insert(size_t insert_location, size_t value) {
