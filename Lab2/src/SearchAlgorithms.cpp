@@ -55,6 +55,11 @@ SearchAlgorithms::Result SearchAlgorithms::BFS(graph& data, int start, int dest)
 		visited[curNode] = true;
 		nodesExplored++;
 
+		if (curNode == dest) {
+			std::vector<int> finalPath = path->pathToRoot(curNode);
+			return Result(finalPath, 0, getTotalDistance(data, finalPath), nodesExplored);
+		}
+
 		std::vector<graph::Node*> childrenNodes = data.getChildren(curNode);
 
 		std::vector<int> children;
@@ -71,10 +76,6 @@ SearchAlgorithms::Result SearchAlgorithms::BFS(graph& data, int start, int dest)
 			nodes.push(child);
 			visited[child] = true;
 		}
-
-		if (curNode == dest) {
-			return Result(path->pathToRoot(curNode), 0, 0, nodesExplored);
-		}
 	}
 	return Result();
 }
@@ -86,7 +87,8 @@ SearchAlgorithms::Result SearchAlgorithms::recurBFS(graph& data, int start, int 
 	nodes.push(start);
 
 	if (recurBFS(data, dest, nodes)) {
-		return Result(path->pathToRoot(dest), 0, 0, nodesExplored);
+		std::vector<int> finalPath = path->pathToRoot(dest);
+		return Result(finalPath, 0, getTotalDistance(data, finalPath), nodesExplored);
 	}
 	return Result();
 }
@@ -133,7 +135,8 @@ SearchAlgorithms::Result SearchAlgorithms::DFS(graph& data, int start, int dest)
 		visited[curNode] = true;
 		nodesExplored++;
 		if (curNode == dest) {
-			return Result(path->pathToRoot(curNode), 0, 0, nodesExplored);
+			std::vector<int> finalPath = path->pathToRoot(curNode);
+			return Result(finalPath, 0, getTotalDistance(data, finalPath), nodesExplored);
 		}
 
 		std::vector<graph::Node*> childrenNodes = data.getChildren(curNode);
@@ -165,7 +168,8 @@ SearchAlgorithms::Result SearchAlgorithms::recurDFS(graph& data, int start, int 
 	for (int i = 0; i <= data.getSize(); i++)
 		visited.push_back(false);
 	if (recurDFS(data, start, dest, visited)) {
-		return Result(path->pathToRoot(dest), 0, 0, nodesExplored);
+		std::vector<int> finalPath = path->pathToRoot(dest);
+		return Result(finalPath, 0, getTotalDistance(data, finalPath), nodesExplored);
 	}
 	return Result();
 }
@@ -228,7 +232,7 @@ SearchAlgorithms::Result SearchAlgorithms::dijkstra(graph& data, int start, int 
 
 		if (curNode->data == dest) {
 			Result result(path->pathToRoot(curNode->data, curNode ? curNode->parent->data : 1), 
-						  curNode->totalWeight, 0, nodesExplored);
+						  curNode->totalWeight, getTotalDistance(data, curNode), nodesExplored);
 			for (auto node : nodes)
 				delete node;
 			return result;
@@ -365,14 +369,8 @@ SearchAlgorithms::Result SearchAlgorithms::aStar(graph& data, int start, int des
 		}
 
 		if (curNode->data == dest) {
-			float totalDistance = 0;
-			SearchNode* temp = curNode;
-			while (temp->parent) {
-				totalDistance += getHeuristic(data, curNode->parent->data, curNode->data);
-				temp = temp->parent;
-			}
 			Result result(path->pathToRoot(curNode->data, curNode->parent ? curNode->parent->data : 1), 
-						  curNode->totalWeight, totalDistance, nodesExplored);
+						  curNode->totalWeight, getTotalDistance(data, curNode), nodesExplored);
 			for (auto node : nodes)
 				delete node;
 			return result;
@@ -383,6 +381,23 @@ SearchAlgorithms::Result SearchAlgorithms::aStar(graph& data, int start, int des
 			delete node;
 	}
 	return Result();
+}
+
+float SearchAlgorithms::getTotalDistance(graph& data, SearchNode* end) {
+	float totalDistance = 0;
+	while (end->parent) {
+		totalDistance += getHeuristic(data, end->parent->data, end->data);
+		end = end->parent;
+	}
+	return totalDistance;
+}
+
+float SearchAlgorithms::getTotalDistance(graph& data, std::vector<int>& path) {
+	float totalDistance = 0;
+	for (int i = path.size() - 1; i > 0; i--) {
+		totalDistance += getHeuristic(data, path[i - 1], path[i]);
+	}
+	return totalDistance;
 }
 
 float SearchAlgorithms::getHeuristic(graph& data, int cur, int dest) {

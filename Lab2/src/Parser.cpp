@@ -1,6 +1,6 @@
 #include "Parser.h"
 
-void Parser::loadGraph(graph& graph, const char* filePath) {
+int Parser::loadGraph(graph& graph, const char* filePath) {
 	std::ifstream file(filePath);
 
 	std::string line;
@@ -18,6 +18,7 @@ void Parser::loadGraph(graph& graph, const char* filePath) {
 			graph.insert(nodes[0], nodes[i]);
 		}
 	}
+	return count;
 }
 
 void Parser::loadPositions(graph& graph, const char* filePath) {

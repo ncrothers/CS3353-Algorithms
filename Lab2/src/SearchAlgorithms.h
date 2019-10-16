@@ -82,6 +82,8 @@ private:
 	static bool recurDFS(graph& data, int cur, int dest, std::vector<bool>& visited);
 	static bool validPtr(graph& data, SearchNode* ptr);
 	static float getHeuristic(graph& data, int cur, int dest);
+	static float getTotalDistance(graph& data, SearchNode* end);
+	static float getTotalDistance(graph& data, std::vector<int>& end);
 	static void reset(size_t size);
 
 	static std::vector<bool> visited;

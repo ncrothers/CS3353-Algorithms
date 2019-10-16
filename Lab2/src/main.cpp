@@ -10,24 +10,45 @@ Nicholas Crothers
 
 #include <iostream>
 #include <string>
+#include <random>
+#include <time.h>
+
+std::vector<std::pair<int, int>> getRandomPoints(int bound);
 
 int main(int argc, char* argv[]) {
-	int start, dest;
-	start = std::stoi(argv[1]);
-	dest = std::stoi(argv[2]);
-
 	Search search;
-	search.Load("data100/");
-	for (int i = 0; i < 2; i++) {
-		for (int algo = Algorithm::SearchAlgos::BFS; algo < Algorithm::END; algo++) {
-			search.Select(i);
-			search.Execute(static_cast<Algorithm::SearchAlgos>(algo), start, dest);
-			search.Stats(static_cast<Algorithm::SearchAlgos>(algo), i);
-		}
+	int bound = search.Load("data100/");
+	std::vector<std::pair<int, int>> testPoints;
+	if (argc == 3) {
+		testPoints.push_back(std::make_pair<int, int>(std::stoi(argv[1]), std::stoi(argv[2])));
+	}
+	else {
+		testPoints = getRandomPoints(bound);
 	}
 
+	for (int num = 0; num < testPoints.size(); num++) {
+		for (int graphType = 0; graphType < 2; graphType++) {
+			for (int algo = Algorithm::SearchAlgos::BFS; algo < Algorithm::END; algo++) {
+				search.Select(graphType);
+				search.Execute(static_cast<Algorithm::SearchAlgos>(algo), testPoints[num].first, testPoints[num].second);
+				search.Stats(static_cast<Algorithm::SearchAlgos>(algo), graphType);
+				search.Save(static_cast<Algorithm::SearchAlgos>(algo), graphType);
+			}
+		}
+	}
+	
 	std::string stuff;
 	std::getline(std::cin, stuff);
 
 	return 0;
+}
+
+std::vector<std::pair<int, int>> getRandomPoints(int bound) {
+	std::default_random_engine gen(time(nullptr));
+	std::uniform_int_distribution<int> distribution(1, bound);
+	std::vector<std::pair<int, int>> values;
+	for (int i = 0; i < 100; i++) {
+		values.push_back(std::make_pair<int, int>(distribution(gen), distribution(gen)));
+	}
+	return values;
 }

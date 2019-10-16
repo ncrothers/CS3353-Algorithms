@@ -26,7 +26,7 @@ public:
 		END
 	};
 
-    virtual void Load(const char[]) = 0;
+    virtual int Load(const char[]) = 0;
     virtual void Execute(SearchAlgos algo, int start, int dest) = 0;
 	virtual void Select(int type) = 0;
     virtual void Display(SearchAlgos) = 0;

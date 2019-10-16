@@ -10,7 +10,7 @@
 
 class Parser {
 public:
-	static void loadGraph(graph& graph, const char* filePath);
+	static int loadGraph(graph& graph, const char* filePath);
 	static void loadPositions(graph& graph, const char* filePath);
 	static void loadWeights(graph& graph, const char* filePath);
 

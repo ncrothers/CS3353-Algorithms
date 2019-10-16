@@ -6,11 +6,12 @@
 
 Search::Search() {
 	graphType = nullptr;
+	outputFile.open("output_data.csv", std::fstream::out);
 }
 
-void Search::Load(const char* path) {
+int Search::Load(const char* path) {
 	std::string folder(path);
-	Parser::loadGraph(adjlist, (folder + "graph.txt").c_str());
+	int count = Parser::loadGraph(adjlist, (folder + "graph.txt").c_str());
 	Parser::loadGraph(adjmatrix, (folder + "graph.txt").c_str());
 
 	Parser::loadPositions(adjlist, (folder + "positions.txt").c_str());
@@ -18,6 +19,7 @@ void Search::Load(const char* path) {
 
 	Parser::loadWeights(adjlist, (folder + "weights.txt").c_str());
 	Parser::loadWeights(adjmatrix, (folder + "weights.txt").c_str());
+	return count;
 }
 
 void Search::Execute(Algorithm::SearchAlgos algo, int start, int dest) {
@@ -78,7 +80,7 @@ void Search::Stats(Algorithm::SearchAlgos algo, int type) {
 		std::cout << curResult.path[i] << (i != 0 ? " -> " : "");
 	}
 
-	std::chrono::duration<double> time_span = std::chrono::duration_cast<std::chrono::duration<double>>(end - begin);
+	time_span = std::chrono::duration_cast<std::chrono::duration<double>>(end - begin);
 
 	std::cout << std::endl
 		<< "Nodes in Path: " << curResult.path.size() << std::endl
@@ -89,6 +91,34 @@ void Search::Stats(Algorithm::SearchAlgos algo, int type) {
 		<< std::endl << std::endl;
 }
 
-void Search::Save(Algorithm::SearchAlgos, int) {
-
+void Search::Save(Algorithm::SearchAlgos algo, int type) {
+	std::string algoStr;
+	std::string graphType;
+	switch (algo) {
+	case BFS:
+		algoStr = "Iterative BFS";
+		break;
+	case RECURBFS:
+		algoStr = "Recursive BFS";
+		break;
+	case DFS:
+		algoStr = "Iterative DFS";
+		break;
+	case RECURDFS:
+		algoStr = "Recursive DFS";
+		break;
+	case DIJKSTRA:
+		algoStr = "Dijkstra";
+		break;
+	case ASTAR:
+		algoStr = "A* (A star)";
+		break;
+	}
+	outputFile << algoStr << ","
+		<< (type == 0 ? "adjlist" : "adjmatrix") << ","
+		<< curResult.path.size() << ","
+		<< curResult.nodesExplored << ","
+		<< time_span.count() << ","
+		<< curResult.totalDistance << ","
+		<< curResult.totalCost << std::endl;
 }

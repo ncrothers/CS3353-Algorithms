@@ -8,13 +8,14 @@
 #include <string>
 #include <vector>
 #include <chrono>
+#include <fstream>
 
 class Search : public Algorithm {
 public:
 
 	Search();
 
-	void Load(const char*);
+	int Load(const char*);
 	void Execute(SearchAlgos algo, int start, int dest);
 	// 0 = adjlist
 	// 1 = adjmatrix
@@ -24,7 +25,7 @@ public:
 	void Save(SearchAlgos, int);
 
 private:
-	std::string curFile;
+	std::ofstream outputFile;
 
 	AdjList adjlist;
 	AdjMatrix adjmatrix;
@@ -34,6 +35,7 @@ private:
 	// Start and end points for the timer
 	std::chrono::high_resolution_clock::time_point begin;
 	std::chrono::high_resolution_clock::time_point end;
+	std::chrono::duration<double> time_span;
 };
 
 #endif SEARCH_H
