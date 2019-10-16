@@ -10,7 +10,7 @@ graph::Position graph::getPos(int node) const {
 }
 
 void graph::setPos(size_t node, float x, float y, float z) {
-	vertexPos.try_emplace(node, graph::Position(x, y, z));
+	vertexPos.emplace(node, graph::Position(x, y, z));
 }
 
 size_t graph::getSize() const {

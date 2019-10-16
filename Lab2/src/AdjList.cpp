@@ -8,6 +8,10 @@ AdjList::AdjList(size_t size) {
 	reserve(size);
 }
 
+AdjList::~AdjList() {
+
+}
+
 void AdjList::reserve(size_t size) {
 	if (data.size() == 0) {
 		data.reserve(size);
@@ -42,10 +46,10 @@ void AdjList::setWeight(size_t start, size_t end, float weight) {
 	data[start - 1].neighbors[index]->weight = weight;
 }
 
-std::vector<graph::Node> AdjList::getChildren(size_t parent) const {
-	std::vector<Node> children;
+std::vector<graph::Node*> AdjList::getChildren(size_t parent) const {
+	std::vector<Node*> children;
 	for (auto child : data[parent - 1].neighbors)
-		children.push_back(*child);
+		children.push_back(child);
 	return children;
 }
 

@@ -1,11 +1,11 @@
 #include "Search.h"
-#include "SearchAlgorithms.h"
 #include "Parser.h"
 
 #include <iostream>
+#include <iomanip>
 
 Search::Search() {
-
+	graphType = nullptr;
 }
 
 void Search::Load(const char* path) {
@@ -20,26 +20,22 @@ void Search::Load(const char* path) {
 	Parser::loadWeights(adjmatrix, (folder + "weights.txt").c_str());
 }
 
-void Search::Execute() {
-	for (int i = Algorithm::SearchAlgos::BFS; i < Algorithm::SearchAlgos::END; i++) {
-		SearchAlgorithms::runSearch(static_cast<Algorithm::SearchAlgos>(i), adjlist, 1, 7);
-	}
+void Search::Execute(Algorithm::SearchAlgos algo, int start, int dest) {
+	begin = std::chrono::high_resolution_clock::now();
+	curResult = SearchAlgorithms::runSearch(algo, *graphType, start, dest);
+	end = std::chrono::high_resolution_clock::now();
+}
+
+void Search::Select(int type) {
+	if (type == 0)
+		graphType = &adjlist;
+	else
+		graphType = &adjmatrix;
 }
 
 void Search::Display(Algorithm::SearchAlgos algo) {
 	switch (algo) {
 	case BFS:
-		for (int i = 1; i <= 16; i++) {
-			std::cout << i << ":";
-			for (auto val : adjmatrix.getChildren(i)) {
-				std::cout << val.data << ",";
-			}
-			std::cout << std::endl;
-			for (auto val : adjmatrix.getChildren(i)) {
-				std::cout << val.weight << ",";
-			}
-			std::cout << std::endl;
-		}
 		break;
 	case DFS:
 		break;
@@ -48,6 +44,49 @@ void Search::Display(Algorithm::SearchAlgos algo) {
 	case ASTAR:
 		break;
 	}
+}
+
+void Search::Stats(Algorithm::SearchAlgos algo, int type) {
+	std::cout << "Algorithm: ";
+	std::string algoStr;
+	switch (algo) {
+	case BFS:
+		algoStr = "Iterative BFS";
+		break;
+	case RECURBFS:
+		algoStr = "Recursive BFS";
+		break;
+	case DFS:
+		algoStr = "Iterative DFS";
+		break;
+	case RECURDFS:
+		algoStr = "Recursive DFS";
+		break;
+	case DIJKSTRA:
+		algoStr = "Dijkstra";
+		break;
+	case ASTAR:
+		algoStr = "A* (A star)";
+		break;
+	}
+	std::cout << algoStr << std::endl
+
+		<< "Graph Type: " << (type == 0 ? "Adjacency List" : "Adjacency Matrix") << std::endl
+		<< "Path: ";
+
+	for (int i = curResult.path.size() - 1; i >= 0; i--) {
+		std::cout << curResult.path[i] << (i != 0 ? " -> " : "");
+	}
+
+	std::chrono::duration<double> time_span = std::chrono::duration_cast<std::chrono::duration<double>>(end - begin);
+
+	std::cout << std::endl
+		<< "Nodes in Path: " << curResult.path.size() << std::endl
+		<< "Path Cost: " << curResult.totalCost << std::endl
+		<< "Path Distance: " << curResult.totalDistance << std::endl
+		<< "Nodes Explored: " << curResult.nodesExplored << std::endl
+		<< "Time elapsed: " << std::fixed << std::setprecision(7) << time_span.count() << " seconds"
+		<< std::endl << std::endl;
 }
 
 void Search::Save(Algorithm::SearchAlgos, int) {

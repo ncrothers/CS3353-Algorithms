@@ -3,6 +3,7 @@
 #include "Algorithm.h"
 #include "AdjList.h"
 #include "AdjMatrix.h"
+#include "SearchAlgorithms.h"
 
 #include <string>
 #include <vector>
@@ -14,23 +15,24 @@ public:
 	Search();
 
 	void Load(const char*);
-	void Execute();
+	void Execute(SearchAlgos algo, int start, int dest);
+	// 0 = adjlist
+	// 1 = adjmatrix
+	void Select(int type);
 	void Display(SearchAlgos);
+	void Stats(SearchAlgos algo, int type);
 	void Save(SearchAlgos, int);
 
 private:
-
-	// Stores which type of data is currently loaded
 	std::string curFile;
 
 	AdjList adjlist;
 	AdjMatrix adjmatrix;
-
-	// Stores the four dataset sizes for looping
-	int counts[4] = { 10, 1000, 10000, 100000 };
+	graph* graphType;
+	SearchAlgorithms::Result curResult;
 
 	// Start and end points for the timer
-	std::chrono::high_resolution_clock::time_point start;
+	std::chrono::high_resolution_clock::time_point begin;
 	std::chrono::high_resolution_clock::time_point end;
 };
 

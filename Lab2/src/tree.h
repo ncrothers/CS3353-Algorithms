@@ -41,6 +41,7 @@ public:
 	void insert(const T& location, const std::vector<T>& children);
 
 	std::vector<T> pathToRoot(const T& end);
+	std::vector<T> pathToRoot(const T& end, const T& parent);
 
 private:
 	Node<T>* root;
@@ -48,6 +49,7 @@ private:
 	void makeEmpty(Node<T>* node);
 	void setRoot(const T& location);
 	Node<T>* findNode(Node<T>* iter, const T& location);
+	Node<T>* findNode(Node<T>* iter, const T& location, const T& parent);
 };
 
 template <class T>
@@ -73,8 +75,12 @@ bool tree<T>::isEmpty() {
 
 template <class T>
 void tree<T>::makeEmpty(Node<T>* node) {
-	if (node->children.empty())
-		return delete node;
+	if (node == nullptr)
+		return;
+	if (node->children.empty()) {
+		delete node;
+		return;
+	}
 	for (auto child : node->children)
 		makeEmpty(child);
 	delete node;
@@ -124,6 +130,17 @@ std::vector<T> tree<T>::pathToRoot(const T& end) {
 }
 
 template <class T>
+std::vector<T> tree<T>::pathToRoot(const T& end, const T& parent) {
+	std::vector<T> path;
+	Node<T>* iter = findNode(root, end, parent);
+	while (iter != nullptr) {
+		path.push_back(iter->data);
+		iter = iter->parent;
+	}
+	return path;
+}
+
+template <class T>
 void tree<T>::setRoot(const T& location) {
 	root = new Node<T>(location, nullptr);
 }
@@ -135,6 +152,22 @@ tree<T>::Node<T>* tree<T>::findNode(Node<T>* iter, const T& location) {
 		for (auto node : iter->children) {
 			result = findNode(node, location);
 			if (result != nullptr)
+				return result;
+		}
+	}
+	else {
+		return iter;
+	}
+	return nullptr;
+}
+
+template <class T>
+tree<T>::Node<T>* tree<T>::findNode(Node<T>* iter, const T& location, const T& parent) {
+	Node<T>* result;
+	if (iter->data != location) {
+		for (auto node : iter->children) {
+			result = findNode(node, location, parent);
+			if (result != nullptr && result->parent->data == parent)
 				return result;
 		}
 	}
