@@ -22,7 +22,7 @@ public:
 	void Select(int type);
 	void Display(SearchAlgos);
 	void Stats(SearchAlgos algo, int type);
-	void Save(SearchAlgos, int);
+	void Save(SearchAlgos, int, int start, int dest);
 
 private:
 	std::ofstream outputFile;

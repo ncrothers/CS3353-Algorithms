@@ -17,7 +17,7 @@ std::vector<std::pair<int, int>> getRandomPoints(int bound);
 
 int main(int argc, char* argv[]) {
 	Search search;
-	int bound = search.Load("data100/");
+	int bound = search.Load("data16/");
 	std::vector<std::pair<int, int>> testPoints;
 	if (argc == 3) {
 		testPoints.push_back(std::make_pair<int, int>(std::stoi(argv[1]), std::stoi(argv[2])));
@@ -27,12 +27,13 @@ int main(int argc, char* argv[]) {
 	}
 
 	for (int num = 0; num < testPoints.size(); num++) {
+		num = num;
 		for (int graphType = 0; graphType < 2; graphType++) {
 			for (int algo = Algorithm::SearchAlgos::BFS; algo < Algorithm::END; algo++) {
 				search.Select(graphType);
 				search.Execute(static_cast<Algorithm::SearchAlgos>(algo), testPoints[num].first, testPoints[num].second);
 				search.Stats(static_cast<Algorithm::SearchAlgos>(algo), graphType);
-				search.Save(static_cast<Algorithm::SearchAlgos>(algo), graphType);
+				search.Save(static_cast<Algorithm::SearchAlgos>(algo), graphType, testPoints[num].first, testPoints[num].second);
 			}
 		}
 	}

@@ -3,3 +3,8 @@
 /x64
 *.docx
 *.doc
+/data16
+/data50
+/data100
+*.zip
+*.xlsx

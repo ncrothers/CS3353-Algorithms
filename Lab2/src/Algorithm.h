@@ -31,7 +31,7 @@ public:
 	virtual void Select(int type) = 0;
     virtual void Display(SearchAlgos) = 0;
 	virtual void Stats(SearchAlgos algo, int type) = 0;
-    virtual void Save(SearchAlgos, int) = 0;
+    virtual void Save(SearchAlgos, int, int, int) = 0;
 };
 
 #endif ALGORITHM_H

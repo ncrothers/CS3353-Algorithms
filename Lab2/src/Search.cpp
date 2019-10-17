@@ -91,7 +91,7 @@ void Search::Stats(Algorithm::SearchAlgos algo, int type) {
 		<< std::endl << std::endl;
 }
 
-void Search::Save(Algorithm::SearchAlgos algo, int type) {
+void Search::Save(Algorithm::SearchAlgos algo, int type, int start, int dest) {
 	std::string algoStr;
 	std::string graphType;
 	switch (algo) {
@@ -116,6 +116,7 @@ void Search::Save(Algorithm::SearchAlgos algo, int type) {
 	}
 	outputFile << algoStr << ","
 		<< (type == 0 ? "adjlist" : "adjmatrix") << ","
+		<< start << "->" << dest << ","
 		<< curResult.path.size() << ","
 		<< curResult.nodesExplored << ","
 		<< time_span.count() << ","
