@@ -4,3 +4,6 @@
 *.docx
 *.doc
 *.xlsx
+/data16
+/data50
+/data100
