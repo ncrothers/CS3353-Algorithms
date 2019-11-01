@@ -1,7 +1,7 @@
 #include "Factory.h"
 
-#include"TSP.h"
+#include "TSP.h"
 
-Algorithm* Factory::Create(Factory::TSPAlgos algo) {
+TSP* Factory::Create(TSPAlgos algo) {
 	return new TSP(algo);
 }

@@ -1,7 +1,7 @@
 #ifndef FACTORY_H
 #define FACTORY_H
 
-class Algorithm;
+class TSP;
 
 class Factory {
 public:
@@ -11,7 +11,7 @@ public:
 		LAST
 	};
 
-	static Algorithm* Create(TSPAlgos algo);
+	static TSP* Create(TSPAlgos algo);
 
 };
 

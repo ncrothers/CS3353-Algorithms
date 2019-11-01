@@ -35,3 +35,4 @@
 *.vcxproj
 *.vcxproj.filters
 *.vcxproj.user
+*.cd

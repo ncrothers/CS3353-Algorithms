@@ -3,9 +3,9 @@
 
 #include "TSPAlgorithm.h"
 
-class DynamicP {
+class DynamicP : public TSPAlgorithm {
 public:
-	void start();
+	void start(int start, int size);
 };
 
 #endif
