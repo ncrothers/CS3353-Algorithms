@@ -11,6 +11,7 @@ void NaiveBF::start(int start, int size) {
 	std::vector<int> path;
 	
 	branch(path, 0, startNode);
+	startNode = start;
 }
 
 void NaiveBF::branch(std::vector<int> path, int visited, int next) {
@@ -43,7 +44,7 @@ void NaiveBF::branch(std::vector<int> path, int visited, int next) {
 float NaiveBF::getPathDistance(std::vector<int>& path) {
 	float totalDist = 0;
 	for (int i = 0; i < path.size() - 1; i++) {
-		totalDist += getDistance(path[i], path[i + 1]);
+		totalDist += distance[path[i]][path[i + 1]];
 	}
 	return totalDist;
 }
@@ -56,11 +57,4 @@ bool NaiveBF::allVisited(int visited) {
 		visited = visited >> 1;
 	}
 	return true;
-}
-
-float NaiveBF::getDistance(int first, int second) {
-	Parser::Position& fPos = positions.at(first);
-	Parser::Position& sPos = positions.at(second);
-
-	return (sqrt(pow(sPos.x - fPos.x, 2) + pow(sPos.y - fPos.y, 2) + pow(sPos.z - fPos.z, 2)));
 }

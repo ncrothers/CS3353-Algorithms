@@ -4,6 +4,8 @@
 #include <unordered_map>
 #include <vector>
 
+#include "TSPAlgorithm.h"
+
 class Parser {
 public:
 	struct Position {
@@ -15,6 +17,7 @@ public:
 
 	static int loadGraph(std::unordered_map<int, Position>& positions, const char* filePath);
 	static std::vector<int> splitNodes(std::string& str);
+
 };
 
 #endif

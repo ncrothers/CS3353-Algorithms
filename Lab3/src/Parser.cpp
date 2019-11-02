@@ -2,7 +2,7 @@
 #include <fstream>
 #include <string>
 
-int Parser::loadGraph(std::unordered_map<int, Parser::Position>& positions, const char* filePath) {
+int Parser::loadGraph(std::unordered_map<int, Position>& positions, const char* filePath) {
 	std::ifstream file(filePath);
 
 	std::string line;
@@ -13,10 +13,13 @@ int Parser::loadGraph(std::unordered_map<int, Parser::Position>& positions, cons
 	file.clear();
 	file.seekg(0);
 
+	// Loads in position information from the file
 	while (file >> line) {
 		std::vector<int> nodes = splitNodes(line);
+
 		positions.emplace(nodes[0], Position(nodes[1], nodes[2], nodes[3]));
 	}
+
 	return count;
 }
 

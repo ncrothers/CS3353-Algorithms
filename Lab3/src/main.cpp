@@ -3,12 +3,16 @@
 
 int main(int argc, char** argv) {
 	int start = 1;
-	int size = 11;
+	int size = 9;
 
-	TSP* tsp = Factory::Create(Factory::NAIVEBF);
+	TSP* naive = Factory::Create(Factory::NAIVEBF);
+	TSP* dynam = Factory::Create(Factory::DP);
 
-	tsp->Load("data/graph.txt");
-	tsp->Execute(start, size);
+	naive->Load("data/graph.txt");
+	naive->Execute(start, size);
+
+	dynam->Load("data/graph.txt");
+	dynam->Execute(start, size);
 
 	return 0;
 }

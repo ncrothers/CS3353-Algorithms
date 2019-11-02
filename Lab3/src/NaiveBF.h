@@ -17,7 +17,6 @@ private:
 	// Keeps track of the total number of times the algorithm branches
 	int branchCount = 0;
 	float getPathDistance(std::vector<int>& path);
-	float getDistance(int first, int second);
 	bool allVisited(int visited);
 };
 

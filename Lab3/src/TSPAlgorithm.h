@@ -10,11 +10,11 @@ class TSPAlgorithm {
 public:
 	virtual void start(int start, int size) = 0;
 
-	virtual std::unordered_map<int, Parser::Position>& getPositions() {
-		return positions;
+	virtual void initDistanceMatrix(std::vector<std::vector<float>> input) {
+		distance = input;
 	}
 protected:
-	std::unordered_map<int, Parser::Position> positions;
+	std::vector<std::vector<float>> distance;
 
 	int numCities = 0;
 	std::vector<int> bestPath;
