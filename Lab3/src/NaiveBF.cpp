@@ -5,22 +5,22 @@
 NaiveBF::NaiveBF() {
 }
 
-void NaiveBF::start(int start, int size) {
-	numCities = size;
-	startNode = start;
+void NaiveBF::startAlgo(int _start, int _N) {
+	N = _N;
+	start = _start;
+	allVisited = (1 << N) - 1;
 	std::vector<int> path;
 	
-	branch(path, 0, startNode);
-	startNode = start;
+	branch(path, 0, start);
 }
 
 void NaiveBF::branch(std::vector<int> path, int visited, int next) {
 	branchCount++;
 	path.push_back(next);
 	// Marks the current node as visited
-	visited = visited | (1 << (next - 1));
+	visited |= (1 << (next - 1));
 
-	if (next == startNode && allVisited(visited)) {
+	if (next == start && visited == allVisited) {
 		float pathDist = getPathDistance(path);
 		if (pathDist < bestPathDist) {
 			bestPath = path;
@@ -28,10 +28,10 @@ void NaiveBF::branch(std::vector<int> path, int visited, int next) {
 		}
 	}
 	else {
-		if (allVisited(visited)) {
+		if (visited == allVisited) {
 			branch(path, visited, 1);
 		}
-		for (int i = 1; i <= numCities; i++) {
+		for (int i = 1; i <= N; i++) {
 			// Checks if the node has been visited
 			if ((visited & (1 << i - 1)) == 0) {
 				branch(path, visited, i);
@@ -44,17 +44,7 @@ void NaiveBF::branch(std::vector<int> path, int visited, int next) {
 float NaiveBF::getPathDistance(std::vector<int>& path) {
 	float totalDist = 0;
 	for (int i = 0; i < path.size() - 1; i++) {
-		totalDist += distance[path[i]][path[i + 1]];
+		totalDist += distance[path[i] - 1][path[i + 1] - 1];
 	}
 	return totalDist;
-}
-
-// Function that checks if all nodes have been visited
-bool NaiveBF::allVisited(int visited) {
-	for (int i = 0; i < numCities; i++) {
-		if ((visited & 1) != 1)
-			return false;
-		visited = visited >> 1;
-	}
-	return true;
 }

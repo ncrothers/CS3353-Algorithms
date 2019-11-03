@@ -8,7 +8,7 @@
 
 class TSPAlgorithm {
 public:
-	virtual void start(int start, int size) = 0;
+	virtual void startAlgo(int _start, int _N) = 0;
 
 	virtual void initDistanceMatrix(std::vector<std::vector<float>> input) {
 		distance = input;
@@ -16,10 +16,11 @@ public:
 protected:
 	std::vector<std::vector<float>> distance;
 
-	int numCities = 0;
+	int allVisited = 0;
+	int N = 0;
 	std::vector<int> bestPath;
 	float bestPathDist = INT32_MAX;
-	int startNode = 0;
+	int start = 0;
 };
 
 #endif

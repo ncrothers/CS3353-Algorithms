@@ -9,7 +9,7 @@
 class NaiveBF : public TSPAlgorithm {
 public:
 	NaiveBF();
-	void start(int start, int size);
+	void startAlgo(int _start, int _N);
 
 	void branch(std::vector<int> path, int visited, int next);
 
@@ -17,7 +17,6 @@ private:
 	// Keeps track of the total number of times the algorithm branches
 	int branchCount = 0;
 	float getPathDistance(std::vector<int>& path);
-	bool allVisited(int visited);
 };
 
 #endif

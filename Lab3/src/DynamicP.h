@@ -5,7 +5,7 @@
 
 class DynamicP : public TSPAlgorithm {
 public:
-	void start(int start, int size);
+	void startAlgo(int _start, int _N);
 
 private:
 	std::vector<int> combinations(int r);
