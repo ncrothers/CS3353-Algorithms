@@ -7,16 +7,16 @@ void DynamicP::startAlgo(int _start, int _N) {
 
 	allVisited = (1 << N) - 1;
 
-	// Creates memo table
-	double** memo = new double*[N];
+	// Creates table
+	double** table = new double*[N];
 	for (int i = 0; i < N; i++) {
-		memo[i] = new double[1 << N];
+		table[i] = new double[1 << N];
 	}
 
 	for (int next = 0; next < N; next++) {
 		if (next == start) continue;
 		// Adds all next subpaths to the starting node
-		memo[next][(1 << start) | (1 << next)] = distance[start][next];
+		table[next][(1 << start) | (1 << next)] = distance[start][next];
 	}
 
 	for (int r = 3; r <= N; r++) {
@@ -30,16 +30,16 @@ void DynamicP::startAlgo(int _start, int _N) {
 				int subsetWithoutNext = subset ^ (1 << next);
 				float bestDist = INT32_MAX;
 
-				// This for loop and the subsequent statement builds the memo table with adding distances
+				// This for loop and the subsequent statement builds the table table with adding distances
 				// together and inserting them into the table as appropriate
 				for (int end = 0; end < N; end++) {
 					if (end == start || end == next || notIn(end, subset)) continue;
-					double newDistance = memo[end][subsetWithoutNext] + distance[end][next];
+					double newDistance = table[end][subsetWithoutNext] + distance[end][next];
 					if (newDistance < bestDist) {
 						bestDist = newDistance;
 					}
 				}
-				memo[next][subset] = bestDist;
+				table[next][subset] = bestDist;
 			}
 		}
 	}
@@ -47,7 +47,7 @@ void DynamicP::startAlgo(int _start, int _N) {
 	// Connect tour back to starting node and minimize cost
 	for (int i = 0; i < N; i++) {
 		if (i == start) continue;
-		double tourCost = memo[i][allVisited] + distance[i][start];
+		double tourCost = table[i][allVisited] + distance[i][start];
 		if (tourCost < bestPathDist) {
 			bestPathDist = tourCost;
 		}
@@ -57,15 +57,15 @@ void DynamicP::startAlgo(int _start, int _N) {
 	int state = allVisited;
 	bestPath.push_back(start + 1);
 
-	// Follow path from memo table
+	// Follow path from table
 	for (int i = 1; i < N; i++) {
 
 		int index = -1;
 		for (int j = 0; j < N; j++) {
 			if (j == start || notIn(j, state)) continue;
 			if (index == -1) index = j;
-			double prevDist = memo[index][state] + distance[index][lastIndex];
-			double newDist = memo[j][state] + distance[j][lastIndex];
+			double prevDist = table[index][state] + distance[index][lastIndex];
+			double newDist = table[j][state] + distance[j][lastIndex];
 			if (newDist < prevDist) {
 				index = j;
 			}
@@ -77,11 +77,11 @@ void DynamicP::startAlgo(int _start, int _N) {
 
 	bestPath.push_back(start + 1);
 
-	// Frees the memory used by the memo table
+	// Frees the memory used by the table
 	for (int i = 0; i < N; i++) {
-		delete[] memo[i];
+		delete[] table[i];
 	}
-	delete[] memo;
+	delete[] table;
 }
 
 bool DynamicP::notIn(int node, int subset) {
@@ -107,7 +107,7 @@ void DynamicP::combinations(int set, int cur, int r, std::vector<int>& subsets) 
 			// Use set with the current node visited
 			set ^= 1 << i;
 
-			combinations(set, cur + 1, r - 1, subsets);
+			combinations(set, i + 1, r - 1, subsets);
 
 			// Backtrack with current node not visited
 			set ^= 1 << i;

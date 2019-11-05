@@ -3,7 +3,7 @@
 
 int main(int argc, char** argv) {
 	int start = 1;
-	int size = 9;
+	int size = 11;
 
 	TSP* naive = Factory::Create(Factory::NAIVEBF);
 	TSP* dynam = Factory::Create(Factory::DP);
