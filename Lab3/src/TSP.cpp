@@ -1,8 +1,9 @@
 #include "TSP.h"
 
 #include <math.h>
+#include <iostream>
 
-float getDistance(Parser::Position&, Parser::Position&);
+float getDistance(FileHandler::Position&, FileHandler::Position&);
 
 TSP::TSP(Factory::TSPAlgos algo) {
 	switch (algo) {
@@ -12,13 +13,17 @@ TSP::TSP(Factory::TSPAlgos algo) {
 	case Factory::DP:
 		algoObj = new DynamicP();
 		break;
+	case Factory::LAST:
+		break;
+	default:
+		break;
 	}
 }
 
 int TSP::Load(const char* filePath) {
-	std::unordered_map<int, Parser::Position> positions;
+	std::unordered_map<int, FileHandler::Position> positions;
 
-	int size = Parser::loadGraph(positions, filePath);
+	int size = FileHandler::loadGraph(positions, filePath);
 	std::vector<std::vector<float>> distance(size);
 	for (int i = 0; i < size; i++) {
 		for (int j = 0; j < size; j++) {
@@ -46,26 +51,37 @@ int TSP::Load(const char* filePath) {
 	return 0;
 }
 
-float getDistance(Parser::Position& start, Parser::Position& end) {
+float getDistance(FileHandler::Position& start, FileHandler::Position& end) {
 	return (sqrt(pow(start.x - end.x, 2) + pow(start.y - end.y, 2) + pow(start.z - end.z, 2)));
 }
 
 void TSP::Execute(int start, int size) {
+	begin = std::chrono::high_resolution_clock::now();
 	algoObj->startAlgo(start, size);
+	end = std::chrono::high_resolution_clock::now();
+	auto elapsedTime = std::chrono::duration_cast<std::chrono::duration<double>>(end - begin);;
+	execTimes.push_back(elapsedTime.count());
+	tourDistances.push_back(algoObj->getBestDistance());
 }
 
-void TSP::Select(int type) {
+void TSP::Stats() {
+	std::vector<int>& tour = algoObj->getBestTour();
+
+	std::cout << algoObj->getTypeName() << ":" << std::endl
+		<< "Number of nodes: " << tour.size() - 1 << std::endl
+		<< "Starting node: " << tour[0] << std::endl
+		<< "Shortest tour: ";
+
+	for (int i = 0; i < tour.size(); i++) {
+		std::cout << tour[i] << (i == tour.size() - 1 ? "" : "->");
+	}
+	std::cout << std::endl
+		<< "Tour distance: " << algoObj->getBestDistance() << std::endl
+		<< "Time elapsed: " << execTimes.back() << " seconds" << std::endl << std::endl;
+
 
 }
 
-void TSP::Display(Factory::TSPAlgos) {
-
-}
-
-void TSP::Stats(Factory::TSPAlgos algo, int type) {
-
-}
-
-void TSP::Save(Factory::TSPAlgos, int, int, int) {
-
+void TSP::Save(const char* filePath, int sizeStart) {
+	FileHandler::saveData(filePath, tourDistances, execTimes, sizeStart);
 }

@@ -1,11 +1,21 @@
 #include "DynamicP.h"
 
+#include <string>
+
+std::string DynamicP::getTypeName() {
+	return std::string("Dynamic Programming - Tabulation");
+}
+
 void DynamicP::startAlgo(int _start, int _N) {
 	N = _N;
 	// Converts startnode to one less for indexing
 	start = _start - 1;
 
 	allVisited = (1 << N) - 1;
+	bestTourDist = INT32_MAX;
+
+	if (bestTour.size() != 0) 
+		bestTour.clear();
 
 	// Creates table
 	double** table = new double*[N];
@@ -48,14 +58,14 @@ void DynamicP::startAlgo(int _start, int _N) {
 	for (int i = 0; i < N; i++) {
 		if (i == start) continue;
 		double tourCost = table[i][allVisited] + distance[i][start];
-		if (tourCost < bestPathDist) {
-			bestPathDist = tourCost;
+		if (tourCost < bestTourDist) {
+			bestTourDist = tourCost;
 		}
 	}
 
 	int lastIndex = start;
 	int state = allVisited;
-	bestPath.push_back(start + 1);
+	bestTour.push_back(start + 1);
 
 	// Follow path from table
 	for (int i = 1; i < N; i++) {
@@ -70,12 +80,12 @@ void DynamicP::startAlgo(int _start, int _N) {
 				index = j;
 			}
 		}
-		bestPath.push_back(index + 1);
+		bestTour.push_back(index + 1);
 		state ^= (1 << index);
 		lastIndex = index;
 	}
 
-	bestPath.push_back(start + 1);
+	bestTour.push_back(start + 1);
 
 	// Frees the memory used by the table
 	for (int i = 0; i < N; i++) {

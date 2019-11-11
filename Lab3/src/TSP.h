@@ -4,7 +4,9 @@
 #include "Factory.h"
 #include "NaiveBF.h"
 #include "DynamicP.h"
-#include "Parser.h"
+#include "FileHandler.h"
+
+#include <vector>
 
 class TSP {
 public:
@@ -12,13 +14,15 @@ public:
 
 	int Load(const char* filePath);
 	void Execute(int start, int size);
-	void Select(int type);
-	void Display(Factory::TSPAlgos);
-	void Stats(Factory::TSPAlgos algo, int type);
-	void Save(Factory::TSPAlgos, int, int, int);
+	void Stats();
+	void Save(const char* filePath, int sizeStart);
 
 private:
 	TSPAlgorithm* algoObj;
+	std::chrono::high_resolution_clock::time_point begin;
+	std::chrono::high_resolution_clock::time_point end;
+	std::vector<float> execTimes;
+	std::vector<float> tourDistances;
 };
 
 #endif

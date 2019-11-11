@@ -1,12 +1,10 @@
-#ifndef PARSER_H
-#define PARSER_H
+#ifndef FILEHANDLER_H
+#define FILEHANDLER_H
 
 #include <unordered_map>
 #include <vector>
 
-#include "TSPAlgorithm.h"
-
-class Parser {
+class FileHandler {
 public:
 	struct Position {
 		Position(float x, float y, float z)
@@ -16,8 +14,10 @@ public:
 	};
 
 	static int loadGraph(std::unordered_map<int, Position>& positions, const char* filePath);
-	static std::vector<int> splitNodes(std::string& str);
+	static void saveData(const char* filePath, std::vector<float>& distances, std::vector<float>& times, int sizeStart);
 
+private:
+	static std::vector<int> splitNodes(std::string& str);
 };
 
 #endif

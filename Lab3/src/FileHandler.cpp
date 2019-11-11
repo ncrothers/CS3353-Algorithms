@@ -1,8 +1,8 @@
-#include "Parser.h"
+#include "FileHandler.h"
 #include <fstream>
 #include <string>
 
-int Parser::loadGraph(std::unordered_map<int, Position>& positions, const char* filePath) {
+int FileHandler::loadGraph(std::unordered_map<int, Position>& positions, const char* filePath) {
 	std::ifstream file(filePath);
 
 	std::string line;
@@ -23,7 +23,15 @@ int Parser::loadGraph(std::unordered_map<int, Position>& positions, const char* 
 	return count;
 }
 
-std::vector<int> Parser::splitNodes(std::string& str) {
+void FileHandler::saveData(const char* filePath, std::vector<float>& distances, std::vector<float>& times, int sizeStart) {
+	std::ofstream file(filePath);
+
+	for (int i = 0; i < distances.size(); i++) {
+		file << sizeStart + i << "," << distances[i] << "," << times[i] << std::endl;
+	}
+}
+
+std::vector<int> FileHandler::splitNodes(std::string& str) {
 	std::vector<int> nodes;
 	size_t index1 = 0;
 	size_t index0 = 0;
