@@ -57,11 +57,19 @@ float getDistance(FileHandler::Position& start, FileHandler::Position& end) {
 	return (sqrt(pow(start.x - end.x, 2) + pow(start.y - end.y, 2) + pow(start.z - end.z, 2)));
 }
 
-void TSP::Execute(int start, int size, int _populationSize, TSPAlgorithm::Crossover coType, TSPAlgorithm::Mutation mutType) {
+void TSP::Configure(int opType1, int opType2, int opType3 = -1, int populationSize = -1) {
+	if (populationSize == -1 || opType3 == -1)
+		algoObj->configure(opType1, opType2);
+	else
+		algoObj->configure(opType1, opType2, opType3, populationSize);
+}
+
+void TSP::Execute(int start, int size) {
 	begin = std::chrono::high_resolution_clock::now();
-	algoObj->startAlgo(start, size, _populationSize, coType, mutType);
+	algoObj->startAlgo(start, size);
 	end = std::chrono::high_resolution_clock::now();
-	auto elapsedTime = std::chrono::duration_cast<std::chrono::duration<double>>(end - begin);;
+
+	auto elapsedTime = std::chrono::duration_cast<std::chrono::duration<double>>(end - begin);
 	execTimes.push_back(elapsedTime.count());
 	tourDistances.push_back(algoObj->getBestDistance());
 }
@@ -80,7 +88,6 @@ void TSP::Stats() {
 	std::cout << std::endl
 		<< "Tour distance: " << algoObj->getBestDistance() << std::endl
 		<< "Time elapsed: " << execTimes.back() << " seconds" << std::endl << std::endl;
-
 
 }
 

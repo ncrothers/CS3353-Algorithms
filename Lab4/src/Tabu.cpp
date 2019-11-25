@@ -1,6 +1,6 @@
 #include "Tabu.h"
 
-void Tabu::startAlgo(int _start, int _N, int _populationSize, Crossover coType, Mutation mutType) {
+void Tabu::startAlgo(int _start, int _N) {
 
 }
 

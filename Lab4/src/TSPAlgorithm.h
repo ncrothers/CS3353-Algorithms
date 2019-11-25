@@ -9,17 +9,10 @@
 
 class TSPAlgorithm {
 public:
-  enum class Crossover {
-    PARTIALLY_MAPPED,
-    ORDER
-  };
-
-  enum class Mutation {
-    SWAP,
-    INVERSION
-  };
-	
-	virtual void startAlgo(int _start, int _N, int _populationSize, Crossover coType, Mutation mutType) = 0;
+	virtual void startAlgo(int _start, int _N) = 0;
+	// Two configure options based on what is passed in
+	virtual void configure(int opType1, int opType2, int opType3, int populationSize);
+	virtual void configure(int opType1, int opType2);
 
 	virtual void initDistanceMatrix(std::vector<std::vector<float>> input) {
 		distance = input;

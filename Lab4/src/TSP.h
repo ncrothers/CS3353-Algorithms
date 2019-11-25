@@ -13,7 +13,9 @@ public:
 	TSP(Factory::TSPAlgos algo);
 
 	int Load(const char* filePath);
-	void Execute(int start, int size, int _populationSize, TSPAlgorithm::Crossover coType, TSPAlgorithm::Mutation mutType);
+	// set up this way to allow the same Configure function for both Tabu and Genetic
+	void Configure(int opType1, int opType2, int opType3 = -1, int populationSize = -1);
+	void Execute(int start, int size);
 	void Stats();
 	void Save(const char* filePath, int sizeStart);
 
