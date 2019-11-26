@@ -21,10 +21,17 @@ void Genetic::startAlgo(int _start, int _N) {
 
 	start = _start;
 	N = _N;
+	bestTourDist = INT_MAX;
+
+	if (!bestTour.empty()) {
+		bestTour.clear();
+	}
+
 	GeneticOperators::configure(populationSize, N);
 
 	std::vector<std::vector<int>> population(populationSize);
 	std::vector<float> popFitness(populationSize);
+	std::vector<float> popDistances(populationSize);
 	// Pointers for the selected parents used for crossover each iteration
 	std::vector<int> parent1(N);
 	std::vector<int> parent2(N);
@@ -33,12 +40,13 @@ void Genetic::startAlgo(int _start, int _N) {
 	generatePopulation(population);
 
 	for (int count = 0; count < stopAmount; count++) {
-		calculateFitness(population, popFitness);
-		updateBest(population, popFitness);
+		if (!calculateFitness(population, popDistances, popFitness)) {
+			break;
+		}
+		updateBest(population, popDistances);
 
 		selection(population, popFitness, parent1, parent2);
 
-		// New children memory allocated
 		std::vector<int> child1(N);
 		std::vector<int> child2(N);
 
@@ -47,16 +55,15 @@ void Genetic::startAlgo(int _start, int _N) {
 		mutate(child2);
 		insert(population, popFitness, child1, child2);
 	}
-	int i = 0;
 }
 
-void Genetic::updateBest(std::vector<std::vector<int>>& population, std::vector<float>& popFitness) {
-	float best = popFitness[0];
+void Genetic::updateBest(std::vector<std::vector<int>>& population, std::vector<float>& popDistances) {
+	float best = popDistances[0];
 	int bestIndex = 0;
 
 	for (int i = 1; i < populationSize; i++) {
-		if (popFitness[i] < best) {
-			best = popFitness[i];
+		if (popDistances[i] < best) {
+			best = popDistances[i];
 			bestIndex = i;
 		}
 	}
@@ -69,7 +76,9 @@ void Genetic::updateBest(std::vector<std::vector<int>>& population, std::vector<
 // Generates a random population to begin the algorithm
 void Genetic::generatePopulation(std::vector<std::vector<int>>& population) {
 
-	std::srand(time(0));
+	std::default_random_engine generator;
+	generator.seed(time(0));
+	std::uniform_int_distribution<int> distribution(0, N - 1);
 
 	for (int i = 0; i < populationSize; i++) {
 		// Stores which nodes have been used for the current gene
@@ -82,7 +91,7 @@ void Genetic::generatePopulation(std::vector<std::vector<int>>& population) {
 		// While not all nodes have been added to the current gene
 		while (used != (1 << N) - 1) {
 			// Current randomly generated node
-			int cur = std::rand() % N;
+			int cur = distribution(generator);
 
 			if (used & (1 << cur))
 				continue;
@@ -93,23 +102,49 @@ void Genetic::generatePopulation(std::vector<std::vector<int>>& population) {
 		}
 	}
 
-	for (int j = 0; j < populationSize; j++) {
-		for (int i = 0; i < N; i++) {
-			std::cout << population[j][i] << (i == N - 1 ? "\n" : ", ");
-		}
-	}
+	/*std::vector<int> best({0, 7, 1, 5, 6, 3, 2, 4});
+	population[0] = best;*/
+
+	//for (int j = 0; j < populationSize; j++) {
+	//	for (int i = 0; i < N; i++) {
+	//		std::cout << population[j][i] << (i == N - 1 ? "\n" : ", ");
+	//	}
+	//}
 }
 
 // Calculates the fitness of the entire population
-void Genetic::calculateFitness(std::vector<std::vector<int>>& population, std::vector<float>& fitness) {
+bool Genetic::calculateFitness(std::vector<std::vector<int>>& population, std::vector<float>& popDistances, std::vector<float>& fitness) {
 	for (int i = 0; i < populationSize; i++) {
-		float geneFitness = 0;
+		float geneDistance = 0;
 		for (int j = 0; j < N - 1; j++) {
-			geneFitness += distance[population[i][j]][population[i][j + 1]];
+			geneDistance += distance[population[i][j]][population[i][j + 1]];
 		}
-		geneFitness += distance[population[i][N - 1]][start - 1];
-		fitness[i] = geneFitness;
+		geneDistance += distance[population[i][N - 1]][start - 1];
+		popDistances[i] = geneDistance;
 	}
+
+	float best = popDistances[0];
+	float worst = popDistances[0];
+
+	// Finds best and worst distance for normalization purposes
+	for (int i = 1; i < populationSize; i++) {
+		if (popDistances[i] < best) {
+			best = popDistances[i];
+		}
+		else if (popDistances[i] > worst) {
+			worst = popDistances[i];
+		}
+	}
+
+	// Normalizes fitness using min-max and inverts values so shortest distance is highest fitness
+	for (int i = 0; i < populationSize; i++) {
+		fitness[i] = (popDistances[i] - best) / (worst - best);
+		fitness[i] = 1.0 - fitness[i];
+		if (isnan(fitness[i])) {
+			return false;
+		}
+	}
+	return true;
 }
 
 void Genetic::selection(std::vector<std::vector<int>>& population, std::vector<float>& popFitness, std::vector<int>& p1, std::vector<int>& p2) {
@@ -117,7 +152,7 @@ void Genetic::selection(std::vector<std::vector<int>>& population, std::vector<f
 }
 
 void Genetic::crossover(std::vector<int>& p1, std::vector<int>& p2, std::vector<int>& c1, std::vector<int>& c2) {
-	GeneticOperators::crossover(p1, p2, c1, c2, crossoverType);
+	GeneticOperators::crossover(p1, p2, c1, c2, crossoverRate, crossoverType);
 }
 
 void Genetic::mutate(std::vector<int>& gene) {
@@ -126,16 +161,16 @@ void Genetic::mutate(std::vector<int>& gene) {
 
 void Genetic::insert(std::vector<std::vector<int>>& population, std::vector<float>& popFitness, std::vector<int>& c1, std::vector<int>& c2) {
 	float worst, secondWorst;
-	worst = secondWorst = 0;
+	worst = secondWorst = INT_MAX;
 	int worstIndex, secondWorstIndex;
 	worstIndex = secondWorstIndex = 0;
 
 	for (int i = 0; i < populationSize; i++) {
-		if (popFitness[i] > worst) {
+		if (popFitness[i] < worst) {
 			worst = popFitness[i];
 			worstIndex = i;
 		}
-		else if (popFitness[i] > secondWorst) {
+		else if (popFitness[i] < secondWorst) {
 			secondWorst = popFitness[i];
 			secondWorstIndex = i;
 		}

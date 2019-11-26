@@ -17,7 +17,7 @@ public:
 private:
   // Functions used by the genetic algorithm directly
   void generatePopulation(std::vector<std::vector<int>>& population);
-  void calculateFitness(std::vector<std::vector<int>>& population, std::vector<float>& fitness);
+  bool calculateFitness(std::vector<std::vector<int>>& population, std::vector<float>& popDistances, std::vector<float>& fitness);
   void selection(std::vector<std::vector<int>>& population, 
 	  std::vector<float>& popFitness, std::vector<int>& p1, std::vector<int>& p2);
 
@@ -30,7 +30,8 @@ private:
 
   size_t stopAmount = 10000;
   size_t populationSize;
-  float mutationRate = 0.2;
+  float mutationRate = 0.1;
+  float crossoverRate = 0.75;
 
   GeneticOperators::Selection selectionType;
   GeneticOperators::Mutation mutationType;

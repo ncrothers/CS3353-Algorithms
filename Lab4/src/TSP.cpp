@@ -83,7 +83,7 @@ void TSP::Stats() {
 		<< "Shortest tour: ";
 
 	for (int i = 0; i < tour.size(); i++) {
-		std::cout << tour[i] << (i == tour.size() - 1 ? "" : "->");
+		std::cout << tour[i] + 1 << (i == tour.size() - 1 ? "" : "->");
 	}
 	std::cout << std::endl
 		<< "Tour distance: " << algoObj->getBestDistance() << std::endl
