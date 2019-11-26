@@ -57,7 +57,7 @@ float getDistance(FileHandler::Position& start, FileHandler::Position& end) {
 	return (sqrt(pow(start.x - end.x, 2) + pow(start.y - end.y, 2) + pow(start.z - end.z, 2)));
 }
 
-void TSP::Configure(int opType1, int opType2, int opType3 = -1, int populationSize = -1) {
+void TSP::Configure(int opType1, int opType2, int opType3, int populationSize) {
 	if (populationSize == -1 || opType3 == -1)
 		algoObj->configure(opType1, opType2);
 	else

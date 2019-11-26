@@ -5,6 +5,8 @@
 #ifndef GENETICOPERATORS_H
 #define GENETICOPERATORS_H
 
+#include <vector>
+
 class GeneticOperators {
 public:
 	enum class Selection {
@@ -25,19 +27,24 @@ public:
 		LAST
 	};
 
-	static void select(int** population, int* p1, int* p2, Selection op);
-	static void crossover(int* p1, int* p2, int* c1, int* c2, Crossover op);
-	static void mutate(int* gene, Mutation op);
+	static void configure(int _populationSize, int _N);
+
+	static void select(std::vector<std::vector<int>>& population, std::vector<float>& popFitness, std::vector<int>& p1, std::vector<int>& p2, Selection op);
+	static void crossover(std::vector<int>& p1, std::vector<int>& p2, std::vector<int>& c1, std::vector<int>& c2, Crossover op);
+	static void mutate(std::vector<int>& gene, float mutationRate, Mutation op);
 
 private:
-	static void selectRoulette(int** population, int* p1, int* p2);
-	static void selectElitism(int** population, int* p1, int* p2);
+	static void selectRoulette(std::vector<std::vector<int>>& population, std::vector<float>& popFitness, std::vector<int>& p1, std::vector<int>& p2);
+	static void selectElitism(std::vector<std::vector<int>>& population, std::vector<float>& popFitness, std::vector<int>& p1, std::vector<int>& p2);
 
-	static void crossoverPartiallyMapped(int* p1, int* p2, int* c1, int* c2);
-	static void crossoverOrder(int* p1, int* p2, int* c1, int* c2);
+	static void crossoverPartiallyMapped(std::vector<int>& p1, std::vector<int>& p2, std::vector<int>& c1, std::vector<int>& c2);
+	static void crossoverOrder(std::vector<int>& p1, std::vector<int>& p2, std::vector<int>& c1, std::vector<int>& c2);
 
-	static void mutateSwap(int* gene);
-	static void mutateInvert(int* gene);
+	static void mutateSwap(std::vector<int>& gene, float mutationRate);
+	static void mutateInvert(std::vector<int>& gene, float mutationRate);
+
+	static int N;
+	static int populationSize;
 };
 
 #endif

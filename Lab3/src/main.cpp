@@ -14,14 +14,14 @@ int main(int argc, char** argv) {
 	naive->Load("data/graph.txt");
 	dynam->Load("data/graph.txt");
 
-	for (int size = sizeStart; size <= sizeEnd; size++) {
+	for (int size = 10; size <= 10; size++) {
 		std::cout << size << "..." << std::endl;
-		naive->Execute(start, size);
-		naive->Stats();
+		//naive->Execute(start, size);
+		//naive->Stats();
 		dynam->Execute(start, size);
 		dynam->Stats();
 	}
-	naive->Save("data/naive.csv", sizeStart);
+	//naive->Save("data/naive.csv", sizeStart);
 	dynam->Save("data/dynamicp.csv", sizeStart);
 
 	return 0;

@@ -11,8 +11,7 @@ class TSPAlgorithm {
 public:
 	virtual void startAlgo(int _start, int _N) = 0;
 	// Two configure options based on what is passed in
-	virtual void configure(int opType1, int opType2, int opType3, int populationSize);
-	virtual void configure(int opType1, int opType2);
+	virtual void configure(int opType1, int opType2, int opType3 = -1, int populationSize = -1) = 0;
 
 	virtual void initDistanceMatrix(std::vector<std::vector<float>> input) {
 		distance = input;
@@ -24,6 +23,10 @@ public:
 
 	virtual std::vector<int>& getBestTour() {
 		return bestTour;
+	}
+
+	virtual void setBestTour(std::vector<int>& tour) {
+		bestTour = tour;
 	}
 
 	virtual std::string getTypeName() = 0;

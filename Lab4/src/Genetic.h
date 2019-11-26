@@ -16,15 +16,21 @@ public:
 
 private:
   // Functions used by the genetic algorithm directly
-  void generatePopulation(int** population);
-  void calculateFitness(int** population, float* fitness);
-  void selection(int** population, int* p1, int* p2);
-  void crossover(int* p1, int* p2, int* c1, int* c2);
-  void mutate(int* gene);
+  void generatePopulation(std::vector<std::vector<int>>& population);
+  void calculateFitness(std::vector<std::vector<int>>& population, std::vector<float>& fitness);
+  void selection(std::vector<std::vector<int>>& population, 
+	  std::vector<float>& popFitness, std::vector<int>& p1, std::vector<int>& p2);
 
-  size_t stopAmount = 1000;
+  void crossover(std::vector<int>& p1, std::vector<int>& p2, std::vector<int>& c1, std::vector<int>& c2);
+  void mutate(std::vector<int>& gene);
+  void insert(std::vector<std::vector<int>>& population, 
+	  std::vector<float>& popFitness, std::vector<int>& c1, std::vector<int>& c2);
+
+  void updateBest(std::vector<std::vector<int>>& population, std::vector<float>& popFitness);
+
+  size_t stopAmount = 10000;
   size_t populationSize;
-  float mutationRate;
+  float mutationRate = 0.2;
 
   GeneticOperators::Selection selectionType;
   GeneticOperators::Mutation mutationType;
