@@ -13,6 +13,7 @@ public:
 	enum class Selection {
 		ROULETTE = 0,
 		ELITISM,
+		TOURNAMENT,
 		LAST
 	};
 
@@ -39,9 +40,10 @@ public:
 private:
 	static void selectRoulette(std::vector<std::vector<int>>& population, std::vector<float>& popFitness, std::vector<int>& p1, std::vector<int>& p2);
 	static void selectElitism(std::vector<std::vector<int>>& population, std::vector<float>& popFitness, std::vector<int>& p1, std::vector<int>& p2);
+	static void selectTournament(std::vector<std::vector<int>>& population, std::vector<float>& popFitness, std::vector<int>& p1, std::vector<int>& p2);
 
-	static void crossoverPartiallyMapped(std::vector<int>& p1, std::vector<int>& p2, std::vector<int>& c1, std::vector<int>& c2);
-	static void crossoverOrder(std::vector<int>& p1, std::vector<int>& p2, std::vector<int>& c1, std::vector<int>& c2);
+	static void crossoverPartiallyMapped(std::vector<int>& p1, std::vector<int>& p2, std::vector<int>& child);
+	static void crossoverOrder(std::vector<int>& p1, std::vector<int>& p2, std::vector<int>& child);
 
 	static void mutateSwap(std::vector<int>& gene);
 	static void mutateInvert(std::vector<int>& gene);

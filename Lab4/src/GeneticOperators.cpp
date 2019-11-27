@@ -21,6 +21,7 @@ float GeneticOperators::getRandomFloat(float lowerBound, float upperBound) {
 }
 
 int GeneticOperators::getRandomInt(int lowerBound, int upperBound) {
+	// Don't want inclusive upper bound
 	std::uniform_int_distribution<int> distribution(lowerBound, upperBound - 1);
 	return distribution(generator);
 }
@@ -33,6 +34,8 @@ void GeneticOperators::select(std::vector<std::vector<int>>& population, std::ve
 	case Selection::ELITISM:
 		selectElitism(population, popFitness, p1, p2);
 		break;
+	case Selection::TOURNAMENT:
+		selectTournament(population, popFitness, p1, p2);
 	}
 }
 
@@ -46,10 +49,12 @@ void GeneticOperators::crossover(std::vector<int>& p1, std::vector<int>& p2, std
 
 	switch (op) {
 	case Crossover::PARTIALLY_MAPPED:
-		crossoverPartiallyMapped(p1, p2, c1, c2);
+		crossoverPartiallyMapped(p1, p2, c1);
+		crossoverPartiallyMapped(p2, p1, c2);
 		break;
 	case Crossover::ORDER:
-		crossoverOrder(p1, p2, c1, c2);
+		crossoverOrder(p1, p2, c1);
+		crossoverOrder(p2, p1, c2);
 		break;
 	}
 }
@@ -122,42 +127,70 @@ void GeneticOperators::selectElitism(std::vector<std::vector<int>>& population, 
 	p2 = population[secondBestIndex];
 }
 
+void GeneticOperators::selectTournament(std::vector<std::vector<int>>& population, std::vector<float>& popFitness, std::vector<int>& p1, std::vector<int>& p2) {
+	int numOpponents = 3;
+	std::vector<int> opponents;
+
+	for (int i = 0; i < numOpponents; i++) {
+		opponents.push_back(getRandomInt(0, populationSize));
+	}
+
+	int best, secondBest, bestIndex, secondBestIndex;
+	best = secondBest = 0;
+	bestIndex = secondBestIndex = 0;
+
+	for (auto opponent : opponents) {
+		if (popFitness[opponent] > best) {
+			best = popFitness[opponent];
+			bestIndex = opponent;
+		}
+		else if (popFitness[opponent] > secondBest) {
+			secondBest = popFitness[opponent];
+			secondBestIndex = opponent;
+		}
+	}
+
+	p1 = population[bestIndex];
+	p2 = population[secondBestIndex];
+}
+
 // Crossover Functions
 
-void GeneticOperators::crossoverPartiallyMapped(std::vector<int>& p1, std::vector<int>& p2, std::vector<int>& c1, std::vector<int>& c2) {
+void GeneticOperators::crossoverPartiallyMapped(std::vector<int>& p1, std::vector<int>& p2, std::vector<int>& child) {
 
-	int c1Visited = 0;
-	int c2Visited = 0;
+	int visited = 0;
+	int subpathVisited = 0;
 
 	// Selects random bounds for the subpath
-	int start = 2; // getRandomInt(1, N / 3);
-	int end = 4; // getRandomInt(N / 2, (3 * N) / 4);
+	int start = getRandomInt(1, N / 3);
+	int end = getRandomInt(N / 2, (3 * N) / 4);
 
-	// Transfers the randomly selected subpath over from the opposite parent (c1 with p2, c2 with p1)
+	// Transfers the randomly selected subpath over from the opposite parent
 	for (int i = start; i <= end; i++) {
-		c1[i] = p1[i];
-		c1Visited |= 1 << p1[i];
-		c2[i] = p2[i];
-		c2Visited |= 1 << p2[i];
+		child[i] = p1[i];
+		visited |= 1 << p1[i];
 	}
 
 	// Mapping process for values in subpath
 
-	// Child 1
 	for (int cur = start; cur <= end; cur++) {
 		// Skips if already in child
-		if ((c1Visited & (1 << p2[cur])) != 0)
+		if ((visited & (1 << p2[cur])) != 0)
 			continue;
 
-		for (int i = cur; i <= end; i++) {
+		for (int i = start; i <= end; i++) {
+
+			if ((subpathVisited & (1 << i)) != 0)
+				continue;
 
 			int matchIndex = -1;
+			int curNode = p1[i];
 
 			// Finds matching value in parent2, -1 if within the subpath
 			for (int j = 1; j < N; j++) {
 				// Only checks values outside of subpath
 				if (j < start || j > end) {
-					if (p2[j] == p1[i]) {
+					if (p2[j] == curNode) {
 						matchIndex = j;
 						break;
 					}
@@ -168,63 +201,27 @@ void GeneticOperators::crossoverPartiallyMapped(std::vector<int>& p1, std::vecto
 			if (matchIndex == -1)
 				continue;
 
-			c1[matchIndex] = p2[cur];
-			c1Visited |= 1 << p2[cur];
+			child[matchIndex] = p2[cur];
+			visited |= 1 << p2[cur];
+			subpathVisited |= 1 << i;
 			break;
-		}
-	}
-
-	// Child 2 process
-
-	for (int cur = start; cur <= end; cur++) {
-		// Skips if in child already
-		if ((c2Visited & (1 << p1[cur])) != 0)
-			continue;
-
-		for (int i = cur; i <= end; i++) {
-
-			int matchIndex = -1;
-
-			// Finds matching value in parent2, -1 if within the subpath
-			for (int j = 1; j < N; j++) {
-				// Only checks values outside of subpath
-				if (j < start || j > end) {
-					if (p1[j] == p2[i]) {
-						matchIndex = j;
-						break;
-					}
-				}
-			}
-
-			// Move on if not matched
-			if (matchIndex == -1)
-				continue;
-
-			c2[matchIndex] = p1[cur];
-			c2Visited |= 1 << p1[cur];
 		}
 	}
 
 	// Fills in remaining values
 	for (int i = 1; i < N; i++) {
-		// Child 1
 
-		if ((c1Visited & 1 << p2[i]) == 0) {
-			c1[i] = p2[i];
-			c1Visited |= 1 << p2[i];
-		}
+		if (visited == (1 << N) - 2)
+			break;
 
-		// Child 2
-
-		if ((c2Visited & 1 << p1[i]) == 0) {
-			c2[i] = p1[i];
-			c2Visited |= 1 << p1[i];
+		if ((visited & (1 << p2[i])) == 0) {
+			child[i] = p2[i];
+			visited |= 1 << p2[i];
 		}
 	}
-
 }
 
-void GeneticOperators::crossoverOrder(std::vector<int>& p1, std::vector<int>& p2, std::vector<int>& c1, std::vector<int>& c2) {
+void GeneticOperators::crossoverOrder(std::vector<int>& p1, std::vector<int>& p2, std::vector<int>& child) {
 
 }
 

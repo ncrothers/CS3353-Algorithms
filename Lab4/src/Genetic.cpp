@@ -41,6 +41,7 @@ void Genetic::startAlgo(int _start, int _N) {
 
 	for (int count = 0; count < stopAmount; count++) {
 		if (!calculateFitness(population, popDistances, popFitness)) {
+			std::cout << "Diversity ran out" << std::endl << std::endl;
 			break;
 		}
 		updateBest(population, popDistances);
