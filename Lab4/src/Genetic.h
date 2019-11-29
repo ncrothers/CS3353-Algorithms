@@ -28,10 +28,10 @@ private:
 
   void updateBest(std::vector<std::vector<int>>& population, std::vector<float>& popFitness);
 
-  size_t stopAmount = 1000;
+  size_t stopAmount = 500;
   size_t populationSize;
-  float mutationRate = 0.10;
-  float crossoverRate = 0.8;
+  float mutationRate = 0.1;
+  float crossoverRate = 0.95;
 
   GeneticOperators::Selection selectionType;
   GeneticOperators::Mutation mutationType;

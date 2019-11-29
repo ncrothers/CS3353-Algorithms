@@ -33,8 +33,10 @@ void Genetic::startAlgo(int _start, int _N) {
 	std::vector<float> popFitness(populationSize);
 	std::vector<float> popDistances(populationSize);
 	// Pointers for the selected parents used for crossover each iteration
-	std::vector<int> parent1(N);
-	std::vector<int> parent2(N);
+	std::vector<std::vector<int>> parents;
+	int numParents = 6;
+	for (int i = 0; i < numParents; i++)
+		parents.push_back(std::vector<int>(N));
 
 	// Generates initial population
 	generatePopulation(population);
@@ -46,15 +48,20 @@ void Genetic::startAlgo(int _start, int _N) {
 		}
 		updateBest(population, popDistances);
 
-		selection(population, popFitness, parent1, parent2);
+		for (int i = 0; i < numParents; i += 2) {
+			selection(population, popFitness, parents[i], parents[i+1]);
+		}
 
-		std::vector<int> child1(N);
-		std::vector<int> child2(N);
+		std::vector<std::vector<int>> children;
+		for (int i = 0; i < numParents; i++)
+			children.push_back(std::vector<int>(N));
 
-		crossover(parent1, parent2, child1, child2);
-		mutate(child1);
-		mutate(child2);
-		insert(population, popFitness, child1, child2);
+		for (int i = 0; i < numParents; i += 2) {
+			crossover(parents[i], parents[i+1], children[i], children[i+1]);
+			mutate(children[i]);
+			mutate(children[i+1]);
+			insert(population, popFitness, children[i], children[i+1]);
+		}
 	}
 }
 
