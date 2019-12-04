@@ -10,6 +10,7 @@ public:
 	ring_buffer(int _size);
 
 	void push(const T& input);
+	void clear();
 	bool contains(const T& input) const;
 	std::size_t size() const;
 
@@ -31,6 +32,11 @@ void ring_buffer<T>::push(const T& input) {
 		data[head] = input;
 	
 	head = (head == _size - 1 ? 0 : head + 1);
+}
+
+template <typename T>
+void ring_buffer<T>::clear() {
+	data.clear();
 }
 
 template <typename T>

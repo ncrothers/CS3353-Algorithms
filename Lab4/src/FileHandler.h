@@ -15,9 +15,11 @@ public:
 
 	static int loadGraph(std::unordered_map<int, Position>& positions, const char* filePath);
 	static void saveData(const char* filePath, std::vector<float>& distances, std::vector<float>& times, int sizeStart);
+	static void loadBestDistances(const char* filePath, std::vector<float>& distances);
 
 private:
 	static std::vector<int> splitNodes(std::string& str);
+	static float getDistance(std::string& line);
 };
 
 #endif

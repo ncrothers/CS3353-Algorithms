@@ -14,7 +14,7 @@ int main(int argc, char** argv) {
 	naive->Load("data/graph.txt");
 	dynam->Load("data/graph.txt");
 
-	for (int size = 9; size <= 9; size++) {
+	for (int size = 15; size <= 15; size++) {
 		std::cout << size << "..." << std::endl;
 		//naive->Execute(start, size);
 		//naive->Stats();

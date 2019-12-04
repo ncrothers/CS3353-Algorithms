@@ -10,28 +10,32 @@
 
 class GeneticOperators {
 public:
-	enum class Selection {
+	enum Selection {
 		ROULETTE = 0,
 		ELITISM,
 		TOURNAMENT,
-		LAST
+		LASTSEL
 	};
 
-	enum class Crossover {
+	enum Crossover {
 		PARTIALLY_MAPPED = 0,
 		ORDER,
-		LAST
+		LASTCRO
 	};
 
-	enum class Mutation {
+	enum Mutation {
 		SWAP = 0,
 		INVERSION,
-		LAST
+		LASTMUT
 	};
 
-	static void configure(int _populationSize, int _N);
+	static void configure(int _populationSize, int _N, std::vector<std::vector<float>>& _distances);
 	static float getRandomFloat(float lowerBound, float upperBound);
 	static int getRandomInt(int lowerBound, int upperBound);
+
+	static std::string getSelectionName(int type);
+	static std::string getCrossoverName(int type);
+	static std::string getMutationName(int type);
 
 	static void select(std::vector<std::vector<int>>& population, std::vector<float>& popFitness, std::vector<int>& p1, std::vector<int>& p2, Selection op);
 	static void crossover(std::vector<int>& p1, std::vector<int>& p2, std::vector<int>& c1, std::vector<int>& c2, float crossoverRate, Crossover op);
@@ -48,9 +52,12 @@ private:
 	static void mutateSwap(std::vector<int>& gene);
 	static void mutateInvert(std::vector<int>& gene);
 
+	static int keepValue(std::vector<int>& gene);
+
 	static int N;
 	static int populationSize;
 	static std::default_random_engine generator;
+	static std::vector<std::vector<float>>* distances;
 };
 
 #endif

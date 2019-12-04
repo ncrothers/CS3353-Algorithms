@@ -50,6 +50,8 @@ int TSP::Load(const char* filePath) {
 	// Sends the distance matrix ptr to the algorithm
 	algoObj->initDistanceMatrix(distance);
 
+	FileHandler::loadBestDistances("results/dynamicp.csv", algoObj->bestDistances);
+
 	return 0;
 }
 
@@ -65,6 +67,7 @@ void TSP::Configure(int opType1, int opType2, int opType3, int populationSize) {
 }
 
 void TSP::Execute(int start, int size) {
+	algoObj->reset();
 	begin = std::chrono::high_resolution_clock::now();
 	algoObj->startAlgo(start, size);
 	end = std::chrono::high_resolution_clock::now();
@@ -78,7 +81,7 @@ void TSP::Stats() {
 	std::vector<int>& tour = algoObj->getBestTour();
 
 	std::cout << algoObj->getTypeName() << ":" << std::endl
-		<< "Number of nodes: " << tour.size() - 1 << std::endl
+		<< "Number of nodes: " << tour.size() << std::endl
 		<< "Starting node: " << tour[0] << std::endl
 		<< "Shortest tour: ";
 
@@ -93,4 +96,6 @@ void TSP::Stats() {
 
 void TSP::Save(const char* filePath, int sizeStart) {
 	FileHandler::saveData(filePath, tourDistances, execTimes, sizeStart);
+	tourDistances.clear();
+	execTimes.clear();
 }

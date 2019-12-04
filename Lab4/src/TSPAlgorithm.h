@@ -6,6 +6,7 @@
 #include <vector>
 #include <unordered_map>
 #include <chrono>
+#include <iostream>
 
 class TSPAlgorithm {
 public:
@@ -27,9 +28,17 @@ public:
 
 	virtual void setBestTour(std::vector<int>& tour) {
 		bestTour = tour;
+		timeSinceNewBest = 0;
+	}
+
+	virtual void reset() {
+		bestTour.clear();
+		bestTourDist = INT32_MAX;
 	}
 
 	virtual std::string getTypeName() = 0;
+	std::vector<float> bestDistances;
+
 protected:
 	std::vector<std::vector<float>> distance;
 
@@ -38,6 +47,7 @@ protected:
 	std::vector<int> bestTour;
 	float bestTourDist = INT32_MAX;
 	int start = 0;
+	int timeSinceNewBest = 0;
 };
 
 #endif

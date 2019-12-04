@@ -27,7 +27,6 @@ int main(int argc, char* argv[]) {
 	}
 
 	for (int num = 0; num < testPoints.size(); num++) {
-		num = num;
 		for (int graphType = 0; graphType < 2; graphType++) {
 			for (int algo = Algorithm::SearchAlgos::BFS; algo < Algorithm::END; algo++) {
 				search.Select(graphType);

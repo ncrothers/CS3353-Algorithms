@@ -1,6 +1,5 @@
 #include "Tabu.h"
 
-#include <random>
 #include <ctime>
 #include <sstream>
 
@@ -11,6 +10,7 @@ Tabu::~Tabu() {
 void Tabu::configure(int opType1, int bufferSize, int opType3, int populationSize) {
 	buffer = new ring_buffer<std::vector<int>>(bufferSize);
 	hoodOp = static_cast<TabuOperators::Neighborhood>(opType1);
+	generator.seed(time(0));
 }
 
 void Tabu::startAlgo(int _start, int _N) {
@@ -19,15 +19,28 @@ void Tabu::startAlgo(int _start, int _N) {
 	N = _N;
 
 	TabuOperators::configure(N);
+	buffer->clear();
 
 	std::vector<int> currentNode(N);
 	float currentFitness;
 	generateStart(currentNode);
 
-	for (int i = 0; i < iterationCount; i++) {
+	int maxIterations = 1000;
+
+	float bestDistance = ceil(bestDistances[N] * 10) / 10;
+
+	while (bestTourDist > bestDistance) {
 
 		currentFitness = calculateDistance(currentNode);
 		updateBest(currentNode, currentFitness);
+
+		if (timeSinceNewBest > maxIterations) {
+			generateStart(currentNode);
+			timeSinceNewBest = 0;
+			continue;
+		}
+
+		timeSinceNewBest++;
 
 		std::vector<std::vector<int>> neighborhood;
 		selectNeighborhood(currentNode, neighborhood);
@@ -35,7 +48,7 @@ void Tabu::startAlgo(int _start, int _N) {
 		std::vector<float> fitness;
 		calculateNeighborhoodFitness(neighborhood, fitness);
 
-		float best = INT_MAX;
+		float best = INT32_MAX;
 		int bestIndex = 0;
 
 		for (int i = 0; i < neighborhood.size(); i++) {
@@ -53,31 +66,51 @@ void Tabu::startAlgo(int _start, int _N) {
 	}
 }
 
-// Generates a random population to begin the algorithm
+// Generates a random solution to begin the algorithm
 void Tabu::generateStart(std::vector<int>& node) {
 
-	std::default_random_engine generator;
-	generator.seed(time(0));
 	std::uniform_int_distribution<int> distribution(0, N - 1);
 
-	// Stores which nodes have been used
-	int used = 1 << (start - 1);
-	// Sets first node to the start node
-	node[0] = start - 1;
+	int poolSize = 100;
 
-	int index = 1;
-	// While not all nodes have been added to the current gene
-	while (used != (1 << N) - 1) {
-		// Current randomly generated node
-		int cur = distribution(generator);
+	std::vector<std::vector<int>> selectionPool(poolSize);
+	std::vector<float> poolFitness;
 
-		if (used & (1 << cur))
-			continue;
+	for (int i = 0; i < poolSize; i++) {
+		// Stores which nodes have been used
+		int used = 1 << (start - 1);
+		// Sets first node to the start node
+		selectionPool[i].push_back(start - 1);
 
-		node[index] = cur;
-		used ^= 1 << cur;
-		index++;
+		int index = 1;
+		// While not all nodes have been used
+		while (used != (1 << N) - 1) {
+			// Current randomly generated node
+			int cur = distribution(generator);
+
+			if (used & (1 << cur))
+				continue;
+
+			selectionPool[i].push_back(cur);
+			used ^= 1 << cur;
+			index++;
+		}
 	}
+
+	calculateNeighborhoodFitness(selectionPool, poolFitness);
+
+	float best = poolFitness[0];
+	int bestIndex = 0;
+
+	for (int i = 1; i < poolSize; i++) {
+		if (poolFitness[i] < best) {
+			best = poolFitness[i];
+			bestIndex = i;
+		}
+	}
+	
+	node = selectionPool[bestIndex];
+
 }
 
 // Calculates the fitness of the entire neighborhood
@@ -119,11 +152,14 @@ std::string Tabu::getTypeName() {
 	case TabuOperators::Neighborhood::SWAP:
 		neighborhoodName = "Swap";
 		break;
+	case TabuOperators::Neighborhood::INVERSION:
+		neighborhoodName = "Inversion";
+		break;
 	}
 
 	std::stringstream output;
 
-	output << algoName << std::endl << neighborhoodName << std::endl << "Tabu List Size: " << buffer->size();
+	output << algoName << std::endl << neighborhoodName << std::endl << "Tabu List Size - " << buffer->size();
 
 	return output.str();
 }

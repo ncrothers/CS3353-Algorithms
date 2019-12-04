@@ -6,6 +6,8 @@
 #include "TabuOperators.h"
 #include "ring_buffer.h"
 
+#include <random>
+
 class Tabu : public TSPAlgorithm {
 public:
 	~Tabu();
@@ -22,7 +24,8 @@ public:
 
 private:
 	int tabuListSize;
-	int iterationCount = 100;
+	int iterationCount = 2000;
+	std::default_random_engine generator;
 	TabuOperators::Neighborhood hoodOp;
 	ring_buffer<std::vector<int>>* buffer = nullptr;
 

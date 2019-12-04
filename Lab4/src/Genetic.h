@@ -28,10 +28,11 @@ private:
 
   void updateBest(std::vector<std::vector<int>>& population, std::vector<float>& popFitness);
 
-  size_t stopAmount = 500;
+  size_t stopAmount = 2000;
   size_t populationSize;
-  float mutationRate = 0.1;
-  float crossoverRate = 0.95;
+  float mutationRate = 0.08;
+  float crossoverRate = 0.7;
+  std::default_random_engine generator;
 
   GeneticOperators::Selection selectionType;
   GeneticOperators::Mutation mutationType;

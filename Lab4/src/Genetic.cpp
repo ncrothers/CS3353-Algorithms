@@ -1,7 +1,6 @@
 #include "Genetic.h"
 
 #include <iostream>
-#include <random>
 #include <ctime>
 #include <vector>
 
@@ -15,40 +14,45 @@ void Genetic::configure(int selType, int coType, int mutType, int _populationSiz
 	selectionType = static_cast<GeneticOperators::Selection>(selType);
 	crossoverType = static_cast<GeneticOperators::Crossover>(coType);
 	mutationType = static_cast<GeneticOperators::Mutation>(mutType);
+
+	generator.seed(time(0));
 }
 
 void Genetic::startAlgo(int _start, int _N) {
 
 	start = _start;
 	N = _N;
-	bestTourDist = INT_MAX;
 
-	if (!bestTour.empty()) {
-		bestTour.clear();
-	}
-
-	GeneticOperators::configure(populationSize, N);
+	GeneticOperators::configure(populationSize, N, distance);
 
 	std::vector<std::vector<int>> population(populationSize);
 	std::vector<float> popFitness(populationSize);
 	std::vector<float> popDistances(populationSize);
 	// Pointers for the selected parents used for crossover each iteration
 	std::vector<std::vector<int>> parents;
-	int numParents = 6;
+	int numParents = 4;
+
+	int maxIterations = 500;
+
 	for (int i = 0; i < numParents; i++)
 		parents.push_back(std::vector<int>(N));
 
 	// Generates initial population
 	generatePopulation(population);
 
-	for (int count = 0; count < stopAmount; count++) {
+	float bestDistance = ceil(bestDistances[N] * 10) / 10;
+
+	while (bestTourDist > bestDistance) {
 		if (!calculateFitness(population, popDistances, popFitness)) {
-			std::cout << "Diversity ran out" << std::endl << std::endl;
-			break;
+			timeSinceNewBest = 0;
+			return;
 		}
+
+		timeSinceNewBest++;
+
 		updateBest(population, popDistances);
 
-		for (int i = 0; i < numParents; i += 2) {
+		for (int i = 0; i < numParents - 1; i += 2) {
 			selection(population, popFitness, parents[i], parents[i+1]);
 		}
 
@@ -56,7 +60,7 @@ void Genetic::startAlgo(int _start, int _N) {
 		for (int i = 0; i < numParents; i++)
 			children.push_back(std::vector<int>(N));
 
-		for (int i = 0; i < numParents; i += 2) {
+		for (int i = 0; i < numParents - 1; i += 2) {
 			crossover(parents[i], parents[i+1], children[i], children[i+1]);
 			mutate(children[i]);
 			mutate(children[i+1]);
@@ -77,18 +81,23 @@ void Genetic::updateBest(std::vector<std::vector<int>>& population, std::vector<
 	}
 	if (best < bestTourDist) {
 		setBestTour(population[bestIndex]);
-		bestTourDist = best;
+		bestTourDist = ceil(best * 10) / 10;
 	}
 }
 
 // Generates a random population to begin the algorithm
 void Genetic::generatePopulation(std::vector<std::vector<int>>& population) {
 
-	std::default_random_engine generator;
-	generator.seed(time(0));
 	std::uniform_int_distribution<int> distribution(0, N - 1);
 
-	for (int i = 0; i < populationSize; i++) {
+	if (bestTour.size() > 0) {
+		std::vector<int> next = bestTour;
+		mutate(next);
+		population[0] = bestTour;
+		population[1] = next;
+	}
+
+	for (int i = bestTour.size() > 0 ? 2 : 0; i < populationSize; i++) {
 		// Stores which nodes have been used for the current gene
 		int used = 1 << (start - 1);
 		population[i] = std::vector<int>(N);
@@ -109,20 +118,11 @@ void Genetic::generatePopulation(std::vector<std::vector<int>>& population) {
 			index++;
 		}
 	}
-
-	/*std::vector<int> best({0, 7, 1, 5, 6, 3, 2, 4});
-	population[0] = best;*/
-
-	//for (int j = 0; j < populationSize; j++) {
-	//	for (int i = 0; i < N; i++) {
-	//		std::cout << population[j][i] << (i == N - 1 ? "\n" : ", ");
-	//	}
-	//}
 }
 
 // Calculates the fitness of the entire population
 bool Genetic::calculateFitness(std::vector<std::vector<int>>& population, std::vector<float>& popDistances, std::vector<float>& fitness) {
-	for (int i = 0; i < populationSize; i++) {
+	for (int i = 0; i < population.size(); i++) {
 		float geneDistance = 0;
 		for (int j = 0; j < N - 1; j++) {
 			geneDistance += distance[population[i][j]][population[i][j + 1]];
@@ -131,26 +131,9 @@ bool Genetic::calculateFitness(std::vector<std::vector<int>>& population, std::v
 		popDistances[i] = geneDistance;
 	}
 
-	float best = popDistances[0];
-	float worst = popDistances[0];
-
-	// Finds best and worst distance for normalization purposes
-	for (int i = 1; i < populationSize; i++) {
-		if (popDistances[i] < best) {
-			best = popDistances[i];
-		}
-		else if (popDistances[i] > worst) {
-			worst = popDistances[i];
-		}
-	}
-
 	// Normalizes fitness using min-max and inverts values so shortest distance is highest fitness
-	for (int i = 0; i < populationSize; i++) {
-		fitness[i] = (popDistances[i] - best) / (worst - best);
-		fitness[i] = 1.0 - fitness[i];
-		if (isnan(fitness[i])) {
-			return false;
-		}
+	for (int i = 0; i < population.size(); i++) {
+		fitness[i] = (227 / popDistances[i]);
 	}
 	return true;
 }
@@ -168,31 +151,53 @@ void Genetic::mutate(std::vector<int>& gene) {
 }
 
 void Genetic::insert(std::vector<std::vector<int>>& population, std::vector<float>& popFitness, std::vector<int>& c1, std::vector<int>& c2) {
-	float worst, secondWorst;
-	worst = secondWorst = INT_MAX;
-	int worstIndex, secondWorstIndex;
-	worstIndex = secondWorstIndex = 0;
+	std::vector<float> similar{ (float)INT32_MAX, (float)INT32_MAX };
+	std::vector<int> similarIndex{ -1, -1 };
 
-	for (int i = 0; i < populationSize; i++) {
-		if (popFitness[i] < worst) {
-			worst = popFitness[i];
-			worstIndex = i;
-		}
-		else if (popFitness[i] < secondWorst) {
-			secondWorst = popFitness[i];
-			secondWorstIndex = i;
+	std::vector<std::vector<int>> children{ c1, c2 };
+	std::vector<float> distance(2);
+	std::vector<float> fitness(2);
+
+	calculateFitness(children, distance, fitness);
+
+	// Finds the most similar fitness gene in the pool
+	for (int c = 0; c < 2; c++) {
+		for (int i = 0; i < populationSize; i++) {
+			if (similarIndex[0] == i)
+				continue;
+			if (abs(popFitness[i] - fitness[c]) < similar[c]) {
+				similar[c] = popFitness[i] - fitness[c];
+				similarIndex[c] = i;
+			}
 		}
 	}
 
-	// Adds children into population
-	population[worstIndex] = c1;
-	population[secondWorstIndex] = c2;
+	// Only replaces it if the child is more fit
+	for (int c = 0; c < 2; c++) {
+		if (popFitness[similarIndex[c]] < fitness[c]) {
+			population[similarIndex[c]] = children[c];
+		}
+	}
 }
 
 std::string Genetic::getTypeName() {
 	std::string algoName = "Genetic Algorithm";
+	std::string selectionName;
 	std::string crossoverName;
 	std::string mutationName;
+
+	switch (selectionType) {
+	case GeneticOperators::Selection::ROULETTE:
+		selectionName = "Roulette Selection";
+		break;
+	case GeneticOperators::Selection::ELITISM:
+		selectionName = "Elitism Selection";
+		break;
+	case GeneticOperators::Selection::TOURNAMENT:
+		selectionName = "Tournament Selection";
+		break;
+	}
+
 	switch (crossoverType) {
 	case GeneticOperators::Crossover::PARTIALLY_MAPPED:
 		crossoverName = "Partially Mapped Crossover (PMX)";
@@ -211,6 +216,5 @@ std::string Genetic::getTypeName() {
 		break;
 	}
 
-	return algoName + '\n' + crossoverName + '\n' + mutationName;
+	return algoName + '\n' + selectionName + '\n' + crossoverName + '\n' + mutationName;
 }
-

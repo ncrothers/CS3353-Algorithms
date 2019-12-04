@@ -7,11 +7,13 @@
 int GeneticOperators::populationSize = 0;
 int GeneticOperators::N = 0;
 std::default_random_engine GeneticOperators::generator;
+std::vector<std::vector<float>>* GeneticOperators::distances = nullptr;
 
-void GeneticOperators::configure(int _populationSize, int _N) {
+void GeneticOperators::configure(int _populationSize, int _N, std::vector<std::vector<float>>& _distances) {
 	populationSize = _populationSize;
 	N = _N;
 	generator.seed(time(0));
+	distances = &_distances;
 }
 
 // Utility function for getting random values
@@ -24,6 +26,41 @@ int GeneticOperators::getRandomInt(int lowerBound, int upperBound) {
 	// Don't want inclusive upper bound
 	std::uniform_int_distribution<int> distribution(lowerBound, upperBound - 1);
 	return distribution(generator);
+}
+
+std::string GeneticOperators::getSelectionName(int type) {
+	switch (type) {
+	case 0:
+		return std::string("roulette");
+	case 1:
+		return std::string("elitism");
+	case 2:
+		return std::string("tourney");
+	default:
+		return std::string("unknown");
+	}
+}
+
+std::string GeneticOperators::getCrossoverName(int type) {
+	switch (type) {
+	case 0:
+		return std::string("pmapped");
+	case 1:
+		return std::string("order");
+	default:
+		return std::string("unknown");
+	}
+}
+
+std::string GeneticOperators::getMutationName(int type) {
+	switch (type) {
+	case 0:
+		return std::string("swap");
+	case 1:
+		return std::string("inversion");
+	default:
+		return std::string("unknown");
+	}
 }
 
 void GeneticOperators::select(std::vector<std::vector<int>>& population, std::vector<float>& popFitness, std::vector<int>& p1, std::vector<int>& p2, Selection op) {
@@ -85,7 +122,8 @@ void GeneticOperators::selectRoulette(std::vector<std::vector<int>>& population,
 		sumFitness += popFitness[i];
 	}
 
-	float spin = getRandomFloat(0.0, sumFitness);
+	// Prevents floating-point rounding errors where spin == sumFitness
+	float spin = getRandomFloat(0.0, sumFitness - 0.1);
 	int i = 0;
 
 	while (spin < sumFitness) {
@@ -128,7 +166,7 @@ void GeneticOperators::selectElitism(std::vector<std::vector<int>>& population, 
 }
 
 void GeneticOperators::selectTournament(std::vector<std::vector<int>>& population, std::vector<float>& popFitness, std::vector<int>& p1, std::vector<int>& p2) {
-	int numOpponents = 3;
+	int numOpponents = 10;
 	std::vector<int> opponents;
 
 	for (int i = 0; i < numOpponents; i++) {
@@ -161,9 +199,20 @@ void GeneticOperators::crossoverPartiallyMapped(std::vector<int>& p1, std::vecto
 	int visited = 0;
 	int subpathVisited = 0;
 
+	int keepIndex = keepValue(p1);
+
 	// Selects random bounds for the subpath
-	int start = getRandomInt(1, N / 3);
-	int end = getRandomInt(N / 2, (3 * N) / 4);
+	int start = getRandomInt(1, ceil((float)N / 2));
+	int end = getRandomInt(ceil((float)N / 2), N);
+
+	if (N > 8) {
+		while (keepIndex < start)
+			start--;
+		while (keepIndex > start)
+			start++;
+		while (keepIndex + 2 > end)
+			end++;
+	}
 
 	// Transfers the randomly selected subpath over from the first parent
 	for (int i = start; i <= end; i++) {
@@ -225,9 +274,20 @@ void GeneticOperators::crossoverPartiallyMapped(std::vector<int>& p1, std::vecto
 void GeneticOperators::crossoverOrder(std::vector<int>& p1, std::vector<int>& p2, std::vector<int>& child) {
 	int visited = 0;
 
+	int keepIndex = keepValue(p1);
+
 	// Selects random bounds for the subpath
-	int start = getRandomInt(1, N / 3);
-	int end = getRandomInt(N / 2, (3 * N) / 4);
+	int start = getRandomInt(1, ceil((float)N / 2));
+	int end = getRandomInt(ceil((float)N / 2), N);
+
+	if (N > 8) {
+		while (keepIndex < start)
+			start--;
+		while (keepIndex > start)
+			start++;
+		while (keepIndex + 2 > end)
+			end++;
+	}
 
 	// Transfers the randomly selected subpath over from the first parent
 	for (int i = start; i <= end; i++) {
@@ -235,8 +295,11 @@ void GeneticOperators::crossoverOrder(std::vector<int>& p1, std::vector<int>& p2
 		visited |= 1 << p1[i];
 	}
 
-	int pIndex = end + 1;
-	int cIndex = pIndex;
+	int pIndex = end;
+	int cIndex = (pIndex == N - 1 ? 1 : end + 1);
+
+	if (start == 2)
+		pIndex += 0;
 
 	while (cIndex != start) {
 		// If already in tour, skip and increment/wrap to the beginning
@@ -258,10 +321,19 @@ void GeneticOperators::crossoverOrder(std::vector<int>& p1, std::vector<int>& p2
 void GeneticOperators::mutateSwap(std::vector<int>& gene) {
 	int index1 = getRandomInt(1, N);
 	int index2 = getRandomInt(1, N);
+	int index3 = getRandomInt(1, N);
 
-	int temp = gene[index1];
+	while (index2 == index1)
+		index2 = getRandomInt(1, N);
+	while (index3 == index2 || index3 == index1)
+		index3 = getRandomInt(1, N);
+
+
+	int temp1 = gene[index3];
+	int temp2 = gene[index1];
 	gene[index1] = gene[index2];
-	gene[index2] = temp;
+	gene[index2] = temp1;
+	gene[index3] = temp2;
 }
 
 void GeneticOperators::mutateInvert(std::vector<int>& gene) {
@@ -273,4 +345,18 @@ void GeneticOperators::mutateInvert(std::vector<int>& gene) {
 		gene[i] = gene[j];
 		gene[j] = temp;
 	}
+}
+
+int GeneticOperators::keepValue(std::vector<int>& gene) {
+	float best = INT32_MAX;
+	int bestIndex = 0;
+	for (int i = 0; i < gene.size() - 1; i++) {
+		float cur = distances->at(i).at(i + 1) + distances->at(i + 1).at(i + 2);
+		if (cur < best) {
+			best = cur;
+			bestIndex = i;
+		}
+	}
+
+	return bestIndex;
 }
