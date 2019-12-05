@@ -4,6 +4,10 @@
 #include <ctime>
 #include <vector>
 
+#include <fstream>
+#include <chrono>
+#include <stdint.h>
+
 Genetic::Genetic() {
 
 }
@@ -33,6 +37,7 @@ void Genetic::startAlgo(int _start, int _N) {
 	int numParents = 4;
 
 	int maxIterations = 500;
+	int epoch = 0;
 
 	for (int i = 0; i < numParents; i++)
 		parents.push_back(std::vector<int>(N));
@@ -43,14 +48,12 @@ void Genetic::startAlgo(int _start, int _N) {
 	float bestDistance = ceil(bestDistances[N] * 10) / 10;
 
 	while (bestTourDist > bestDistance) {
-		if (!calculateFitness(population, popDistances, popFitness)) {
-			timeSinceNewBest = 0;
-			return;
-		}
+
+		calculateFitness(population, popDistances, popFitness);
 
 		timeSinceNewBest++;
 
-		updateBest(population, popDistances);
+		float best = updateBest(population, popDistances);
 
 		for (int i = 0; i < numParents - 1; i += 2) {
 			selection(population, popFitness, parents[i], parents[i+1]);
@@ -66,10 +69,11 @@ void Genetic::startAlgo(int _start, int _N) {
 			mutate(children[i+1]);
 			insert(population, popFitness, children[i], children[i+1]);
 		}
+		epoch++;
 	}
 }
 
-void Genetic::updateBest(std::vector<std::vector<int>>& population, std::vector<float>& popDistances) {
+float Genetic::updateBest(std::vector<std::vector<int>>& population, std::vector<float>& popDistances) {
 	float best = popDistances[0];
 	int bestIndex = 0;
 
@@ -83,6 +87,7 @@ void Genetic::updateBest(std::vector<std::vector<int>>& population, std::vector<
 		setBestTour(population[bestIndex]);
 		bestTourDist = ceil(best * 10) / 10;
 	}
+	return best;
 }
 
 // Generates a random population to begin the algorithm
@@ -99,22 +104,25 @@ void Genetic::generatePopulation(std::vector<std::vector<int>>& population) {
 
 	for (int i = bestTour.size() > 0 ? 2 : 0; i < populationSize; i++) {
 		// Stores which nodes have been used for the current gene
-		int used = 1 << (start - 1);
+		uint64_t used = 1 << (start - 1);
 		population[i] = std::vector<int>(N);
 		// Sets first node to the start node
 		population[i][0] = start - 1;
+		uint64_t one = 1;
+
+		uint64_t end = (one << N) - 1;
 
 		int index = 1;
 		// While not all nodes have been added to the current gene
-		while (used != (1 << N) - 1) {
+		while (used != end) {
 			// Current randomly generated node
 			int cur = distribution(generator);
 
-			if (used & (1 << cur))
+			if (used & (one << cur))
 				continue;
 
 			population[i][index] = cur;
-			used ^= 1 << cur;
+			used ^= one << cur;
 			index++;
 		}
 	}

@@ -2,6 +2,7 @@
 
 #include <ctime>
 #include <sstream>
+#include <fstream>
 
 Tabu::~Tabu() {
 	delete buffer;
@@ -33,6 +34,8 @@ void Tabu::startAlgo(int _start, int _N) {
 
 		currentFitness = calculateDistance(currentNode);
 		updateBest(currentNode, currentFitness);
+
+		count++;
 
 		if (timeSinceNewBest > maxIterations) {
 			generateStart(currentNode);
@@ -78,21 +81,22 @@ void Tabu::generateStart(std::vector<int>& node) {
 
 	for (int i = 0; i < poolSize; i++) {
 		// Stores which nodes have been used
-		int used = 1 << (start - 1);
+		uint64_t used = 1 << (start - 1);
+		uint64_t one = 1;
 		// Sets first node to the start node
 		selectionPool[i].push_back(start - 1);
 
 		int index = 1;
 		// While not all nodes have been used
-		while (used != (1 << N) - 1) {
+		while (used != (one << N) - 1) {
 			// Current randomly generated node
 			int cur = distribution(generator);
 
-			if (used & (1 << cur))
+			if (used & (one << cur))
 				continue;
 
 			selectionPool[i].push_back(cur);
-			used ^= 1 << cur;
+			used ^= one << cur;
 			index++;
 		}
 	}

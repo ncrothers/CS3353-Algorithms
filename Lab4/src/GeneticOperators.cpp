@@ -196,8 +196,9 @@ void GeneticOperators::selectTournament(std::vector<std::vector<int>>& populatio
 
 void GeneticOperators::crossoverPartiallyMapped(std::vector<int>& p1, std::vector<int>& p2, std::vector<int>& child) {
 
-	int visited = 0;
-	int subpathVisited = 0;
+	uint64_t visited = 0;
+	uint64_t one = 1;
+	uint64_t subpathVisited = 0;
 
 	int keepIndex = keepValue(p1);
 
@@ -217,19 +218,19 @@ void GeneticOperators::crossoverPartiallyMapped(std::vector<int>& p1, std::vecto
 	// Transfers the randomly selected subpath over from the first parent
 	for (int i = start; i <= end; i++) {
 		child[i] = p1[i];
-		visited |= 1 << p1[i];
+		visited |= one << p1[i];
 	}
 
 	// Mapping process for values in subpath
 
 	for (int cur = start; cur <= end; cur++) {
 		// Skips if already in child
-		if ((visited & (1 << p2[cur])) != 0)
+		if ((visited & (one << p2[cur])) != 0)
 			continue;
 
 		for (int i = start; i <= end; i++) {
 
-			if ((subpathVisited & (1 << i)) != 0)
+			if ((subpathVisited & (one << i)) != 0)
 				continue;
 
 			int matchIndex = -1;
@@ -251,8 +252,8 @@ void GeneticOperators::crossoverPartiallyMapped(std::vector<int>& p1, std::vecto
 				continue;
 
 			child[matchIndex] = p2[cur];
-			visited |= 1 << p2[cur];
-			subpathVisited |= 1 << i;
+			visited |= one << p2[cur];
+			subpathVisited |= one << i;
 			break;
 		}
 	}
@@ -261,18 +262,19 @@ void GeneticOperators::crossoverPartiallyMapped(std::vector<int>& p1, std::vecto
 	for (int i = 1; i < N; i++) {
 
 		// If all have been visited, stop the loop
-		if (visited == (1 << N) - 2)
+		if (visited == (one << N) - 2)
 			break;
 
-		if ((visited & (1 << p2[i])) == 0) {
+		if ((visited & (one << p2[i])) == 0) {
 			child[i] = p2[i];
-			visited |= 1 << p2[i];
+			visited |= one << p2[i];
 		}
 	}
 }
 
 void GeneticOperators::crossoverOrder(std::vector<int>& p1, std::vector<int>& p2, std::vector<int>& child) {
-	int visited = 0;
+	uint64_t visited = 0;
+	uint64_t one = 1;
 
 	int keepIndex = keepValue(p1);
 
@@ -292,7 +294,7 @@ void GeneticOperators::crossoverOrder(std::vector<int>& p1, std::vector<int>& p2
 	// Transfers the randomly selected subpath over from the first parent
 	for (int i = start; i <= end; i++) {
 		child[i] = p1[i];
-		visited |= 1 << p1[i];
+		visited |= one << p1[i];
 	}
 
 	int pIndex = end;
@@ -303,13 +305,13 @@ void GeneticOperators::crossoverOrder(std::vector<int>& p1, std::vector<int>& p2
 
 	while (cIndex != start) {
 		// If already in tour, skip and increment/wrap to the beginning
-		if ((visited & (1 << p2[pIndex])) != 0) {
+		if ((visited & (one << p2[pIndex])) != 0) {
 			pIndex = (pIndex == N - 1 ? 1 : pIndex + 1);
 			continue;
 		}
 
 		child[cIndex] = p2[pIndex];
-		visited |= 1 << p2[pIndex];
+		visited |= one << p2[pIndex];
 		// Either increments index or wraps to the beginning
 		pIndex = (pIndex == N - 1 ? 1 : pIndex + 1);
 		cIndex = (cIndex == N - 1 ? 1 : cIndex + 1);
@@ -350,7 +352,7 @@ void GeneticOperators::mutateInvert(std::vector<int>& gene) {
 int GeneticOperators::keepValue(std::vector<int>& gene) {
 	float best = INT32_MAX;
 	int bestIndex = 0;
-	for (int i = 0; i < gene.size() - 1; i++) {
+	for (int i = 0; i < gene.size() - 2; i++) {
 		float cur = distances->at(i).at(i + 1) + distances->at(i + 1).at(i + 2);
 		if (cur < best) {
 			best = cur;

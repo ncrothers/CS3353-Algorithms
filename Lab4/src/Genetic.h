@@ -26,7 +26,7 @@ private:
   void insert(std::vector<std::vector<int>>& population, 
 	  std::vector<float>& popFitness, std::vector<int>& c1, std::vector<int>& c2);
 
-  void updateBest(std::vector<std::vector<int>>& population, std::vector<float>& popFitness);
+  float updateBest(std::vector<std::vector<int>>& population, std::vector<float>& popFitness);
 
   size_t stopAmount = 2000;
   size_t populationSize;

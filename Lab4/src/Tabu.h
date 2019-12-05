@@ -25,6 +25,9 @@ public:
 private:
 	int tabuListSize;
 	int iterationCount = 2000;
+
+	int count = 0;
+
 	std::default_random_engine generator;
 	TabuOperators::Neighborhood hoodOp;
 	ring_buffer<std::vector<int>>* buffer = nullptr;
