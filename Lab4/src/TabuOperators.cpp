@@ -30,22 +30,12 @@ std::string TabuOperators::getNeighborhoodName(int type) {
 
 void TabuOperators::selectSwap(std::vector<int>& source, std::vector<std::vector<int>>& neighborhood) {
 
-	//for (int node = 1; node < N - 1; node++) {
-	//	neighborhood.push_back(std::vector<int>());
-	//	swap(source, neighborhood.back(), findNode(source, node), findNode(source, node + 1));
-	//}
-
 	for (int swap1 = 1; swap1 < N - 1; swap1++) {
 		for (int swap2 = swap1 + 1; swap2 < N; swap2++) {
 			neighborhood.push_back(std::vector<int>());
 			swap(source, neighborhood.back(), swap1, swap2);
 		}
 	}
-
-	//for (int i = 1; i < N - 1; i++) {
-	//	neighborhood.push_back(std::vector<int>());
-	//	swap(source, neighborhood.back(), i, i + 1);
-	//}
 }
 
 void TabuOperators::selectInversion(std::vector<int>& source, std::vector<std::vector<int>>& neighborhood) {
@@ -57,11 +47,6 @@ void TabuOperators::selectInversion(std::vector<int>& source, std::vector<std::v
 			invert(source, neighborhood.back(), i, j);
 		}
 	}
-
-	//for (int i = 1, j = N - 1; i < j; i++, j--) {
-	//	neighborhood.push_back(std::vector<int>());
-	//	invert(source, neighborhood[i - 1], i, j);
-	//}
 }
 
 int TabuOperators::findNode(std::vector<int>& source, int node) {

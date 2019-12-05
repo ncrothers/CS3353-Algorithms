@@ -12,26 +12,26 @@ int main(int argc, char* argv[]) {
 	genetic->Load("data/graph.txt");
 	tabu->Load("data/graph.txt");
 
-	//for (int sel = GeneticOperators::Selection::ROULETTE; sel < GeneticOperators::Selection::ELITISM; sel++) {
-	//	for (int cross = GeneticOperators::Crossover::PARTIALLY_MAPPED; cross < GeneticOperators::Crossover::ORDER; cross++) {
-	//		for (int mut = GeneticOperators::Mutation::SWAP; mut < GeneticOperators::Mutation::LASTMUT; mut++) {
+	for (int sel = GeneticOperators::Selection::ROULETTE; sel < GeneticOperators::Selection::ELITISM; sel++) {
+		for (int cross = GeneticOperators::Crossover::PARTIALLY_MAPPED; cross < GeneticOperators::Crossover::ORDER; cross++) {
+			for (int mut = GeneticOperators::Mutation::SWAP; mut < GeneticOperators::Mutation::LASTMUT; mut++) {
 
-	//			for (int i = 4; i <= 20; i++) {
-	//				genetic->Configure(sel, cross, mut, 150);
-	//				genetic->Execute(1, i);
-	//				genetic->Stats();
-	//			}
+				for (int i = 4; i <= 20; i++) {
+					genetic->Configure(sel, cross, mut, 150);
+					genetic->Execute(1, i);
+					genetic->Stats();
+				}
 
-	//			std::string fileName("results/genetic");
-	//			fileName += "_" + GeneticOperators::getSelectionName(sel);
-	//			fileName += "_" + GeneticOperators::getCrossoverName(cross);
-	//			fileName += "_" + GeneticOperators::getMutationName(mut);
-	//			fileName += ".csv";
+				std::string fileName("results/genetic");
+				fileName += "_" + GeneticOperators::getSelectionName(sel);
+				fileName += "_" + GeneticOperators::getCrossoverName(cross);
+				fileName += "_" + GeneticOperators::getMutationName(mut);
+				fileName += ".csv";
 
-	//			genetic->Save(fileName.c_str(), 4);
-	//		}
-	//	}
-	//}
+				genetic->Save(fileName.c_str(), 4);
+			}
+		}
+	}
 
 	for (int neighborhood = TabuOperators::Neighborhood::SWAP; neighborhood < TabuOperators::Neighborhood::INVERSION; neighborhood++) {
 		for (int size = 100; size <= 200; size += 50) {
